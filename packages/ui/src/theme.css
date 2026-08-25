@@ -1,0 +1,62 @@
+/*
+ * Single source of visual truth: the app (resources/css/app.css) and
+ * Storybook (.storybook/preview.ts) both import this file, so they can
+ * never drift. Mirrors packages/ui/src/tokens/*.ts — kept hand-in-sync
+ * rather than generated, since the palette is still small.
+ */
+
+@theme {
+    --font-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    --font-heading: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+
+    --radius-sm: 0.25rem;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-ring: var(--ring);
+}
+
+/* Dark is the primary design target; light is a fully-supported second mode. */
+:root {
+    --background: hsl(40, 20%, 99%);
+    --foreground: hsl(220, 9%, 10%);
+    --card: hsl(0, 0%, 100%);
+    --card-foreground: hsl(220, 9%, 10%);
+    --border: hsl(220, 10%, 88%);
+    --input: hsl(220, 10%, 85%);
+    --muted: hsl(220, 10%, 94%);
+    --muted-foreground: hsl(220, 6%, 40%);
+    --accent: hsl(32, 90%, 45%);
+    --accent-foreground: hsl(0, 0%, 100%);
+    --destructive: hsl(0, 72%, 48%);
+    --destructive-foreground: hsl(0, 0%, 98%);
+    --ring: hsl(32, 90%, 45%);
+}
+
+.dark {
+    --background: hsl(220, 9%, 7%);
+    --foreground: hsl(0, 0%, 96%);
+    --card: hsl(220, 9%, 10%);
+    --card-foreground: hsl(0, 0%, 96%);
+    --border: hsl(220, 8%, 18%);
+    --input: hsl(220, 8%, 20%);
+    --muted: hsl(220, 8%, 14%);
+    --muted-foreground: hsl(220, 6%, 62%);
+    --accent: hsl(38, 92%, 50%);
+    --accent-foreground: hsl(220, 9%, 9%);
+    --destructive: hsl(0, 72%, 58%);
+    --destructive-foreground: hsl(0, 0%, 98%);
+    --ring: hsl(38, 92%, 50%);
+}

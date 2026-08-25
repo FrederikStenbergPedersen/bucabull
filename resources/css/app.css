@@ -1,0 +1,25 @@
+@import 'tailwindcss';
+@import '../../packages/ui/src/theme.css';
+
+@source '../../packages/ui/src';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * The default border color changed to `currentColor` in Tailwind v4 — this
+ * restores an explicit default so undecorated borders don't render invisible.
+ */
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-border, currentColor);
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}
