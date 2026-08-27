@@ -23,9 +23,7 @@ export function AmbientBackdrop() {
             <div
                 className="absolute inset-0"
                 style={{
-                    background:
-                        'radial-gradient(140% 100% at 0% 0%, color-mix(in oklab, var(--color-accent) 7%, transparent), transparent 60%), ' +
-                        'radial-gradient(140% 100% at 100% 100%, color-mix(in oklab, var(--color-accent-secondary) 7%, transparent), transparent 60%)',
+                    background: 'radial-gradient(140% 100% at 100% 100%, color-mix(in oklab, var(--color-accent-secondary) 7%, transparent), transparent 60%)',
                 }}
             />
 
