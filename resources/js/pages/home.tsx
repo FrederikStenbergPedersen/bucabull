@@ -1,5 +1,5 @@
-import { Button, RosterCard, Text, type BadgeProps } from '@bucabull/ui';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Button, RosterCard, SteamSignInButton, Text, type BadgeProps } from '@bucabull/ui';
+import { Head, router, usePage } from '@inertiajs/react';
 
 import { type SharedData } from '@/types';
 
@@ -72,9 +72,7 @@ export default function Home({ team, isOwnTeam }: HomeProps) {
                         Log out
                     </Button>
                 ) : (
-                    <Link href={route('login')}>
-                        <Button>Log in with Steam</Button>
-                    </Link>
+                    <SteamSignInButton href={route('steam.redirect')} />
                 )}
             </header>
 

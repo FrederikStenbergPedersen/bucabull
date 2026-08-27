@@ -10,6 +10,7 @@ export { FieldError } from './primitives/FieldError';
 export { TextLink } from './primitives/TextLink';
 export { Badge } from './primitives/Badge';
 export type { BadgeProps } from './primitives/Badge';
+export { SteamSignInButton } from './primitives/SteamSignInButton';
 
 export { AuthLayout } from './patterns/AuthLayout';
 export type { AuthLayoutProps } from './patterns/AuthLayout';

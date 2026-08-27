@@ -46,6 +46,14 @@ test('joining with an invalid invite code fails validation', function () {
     expect($user->team_id)->toBeNull();
 });
 
+test('a guest is redirected to login when no home team exists yet', function () {
+    config(['app.home_team_slug' => 'bucabull']);
+
+    $response = $this->get('/');
+
+    $response->assertRedirect(route('login'));
+});
+
 test('the home page shows the home team to a logged-out visitor', function () {
     Team::factory()->create(['slug' => 'bucabull', 'name' => 'Bucabull eSports']);
     config(['app.home_team_slug' => 'bucabull']);

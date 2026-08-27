@@ -15,7 +15,12 @@ Route::get('/', function () {
 
     $team = $user?->team ?? Team::home();
 
-    abort_if(! $team, 404);
+    // No home team exists yet (e.g. brand new deployment, nobody's created
+    // it via Steam login yet) — send guests to log in and create it, rather
+    // than a bare 404. Once it exists, "/" goes back to showing it publicly.
+    if (! $team) {
+        return $user ? to_route('team.join') : to_route('login');
+    }
 
     return Inertia::render('home', [
         'team' => $team->load('users.playerStat'),
