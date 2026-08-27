@@ -1,4 +1,4 @@
-import { Badge, Button, EmptySlotCard, RosterCard, SteamSignInButton, Text, type BadgeProps } from '@bucabull/ui';
+import { AmbientBackdrop, Badge, Button, EmptySlotCard, RosterCard, SteamSignInButton, Text, type BadgeProps } from '@bucabull/ui';
 import { Head, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -85,16 +85,14 @@ function InviteCode({ code }: { code: string }) {
 
 export default function Home({ team, isOwnTeam }: HomeProps) {
     const { auth } = usePage<SharedData>().props;
-    const openSlots = team ? Math.max(0, ROSTER_SIZE - team.users.length) : 0;
+    const players = team?.users ?? [];
+    const openSlots = Math.max(0, ROSTER_SIZE - players.length);
 
     return (
         <div className="relative min-h-svh overflow-hidden bg-background">
             <Head title={team?.name ?? 'Bucabull eSports'} />
 
-            <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                <div className="animate-drift-a absolute -top-40 -left-40 h-96 w-96 rounded-full bg-accent/25 blur-3xl" />
-                <div className="animate-drift-b absolute -top-24 right-0 h-96 w-96 rounded-full bg-accent-secondary/20 blur-3xl" />
-            </div>
+            <AmbientBackdrop />
 
             <header className="animate-fade-in-up relative mx-auto flex max-w-3xl items-center justify-between p-6">
                 <Text variant="subheading" className="tracking-wide uppercase">
@@ -107,81 +105,63 @@ export default function Home({ team, isOwnTeam }: HomeProps) {
                 )}
             </header>
 
-            {team ? (
-                <main className="relative mx-auto flex max-w-3xl flex-col gap-6 px-6 pb-16">
-                    <div
-                        className="animate-fade-in-up flex flex-wrap items-end justify-between gap-4"
-                        style={{ animationDelay: '80ms' }}
-                    >
-                        <div>
-                            <Badge tone="info" className="mb-3">
-                                {isOwnTeam ? 'Your team' : 'Home team'}
-                            </Badge>
-                            <Text variant="display">{team.name}</Text>
+            <main className="relative mx-auto flex max-w-3xl flex-col gap-6 px-6 pb-16">
+                <div
+                    className="animate-fade-in-up flex flex-wrap items-end justify-between gap-4"
+                    style={{ animationDelay: '80ms' }}
+                >
+                    <div>
+                        <Badge tone="info" className="mb-3">
+                            {team ? (isOwnTeam ? 'Your team' : 'Home team') : 'Bucabull eSports'}
+                        </Badge>
+                        <Text variant="display">{team?.name ?? 'Bucabull'}</Text>
+                        <Text variant="muted" className="mt-2">
+                            Steam status, Faceit rank, one roster.
+                        </Text>
+                    </div>
+                    {!auth?.user && (
+                        <div className="flex flex-col items-start gap-2">
+                            <Text variant="muted">Sign in to access the team's features</Text>
+                            <SteamSignInButton href={route('steam.redirect')} />
                         </div>
-                        {!auth?.user && (
-                            <div className="flex flex-col items-start gap-2">
-                                <Text variant="muted">Sign in to access the team's features</Text>
-                                <SteamSignInButton href={route('steam.redirect')} />
-                            </div>
-                        )}
-                        {isOwnTeam && auth?.user && <InviteCode code={team.invite_code} />}
-                    </div>
+                    )}
+                    {isOwnTeam && auth?.user && team && <InviteCode code={team.invite_code} />}
+                </div>
 
-                    <div className="flex flex-col gap-3">
-                        {team.users.map((player, index) => {
-                            const stat = player.playerStat;
-                            return (
-                                <div
-                                    key={player.id}
-                                    className="animate-fade-in-up"
-                                    style={{ animationDelay: `${160 + index * 70}ms` }}
-                                >
-                                    <RosterCard
-                                        name={player.nickname}
-                                        avatarUrl={player.avatar}
-                                        status={statusFor(stat?.steam_persona_state ?? null)}
-                                        faceit={
-                                            stat?.faceit_skill_level && stat?.faceit_elo
-                                                ? { level: stat.faceit_skill_level, elo: stat.faceit_elo }
-                                                : null
-                                        }
-                                        playtimeLabel={playtimeLabel(stat?.playtime_2weeks_minutes ?? null)}
-                                    />
-                                </div>
-                            );
-                        })}
-                        {Array.from({ length: openSlots }).map((_, index) => (
+                <div className="flex flex-col gap-3">
+                    {players.map((player, index) => {
+                        const stat = player.playerStat;
+                        return (
                             <div
-                                key={`open-${index}`}
+                                key={player.id}
                                 className="animate-fade-in-up"
-                                style={{ animationDelay: `${160 + (team.users.length + index) * 70}ms` }}
+                                style={{ animationDelay: `${160 + index * 70}ms` }}
                             >
-                                <EmptySlotCard />
+                                <RosterCard
+                                    name={player.nickname}
+                                    avatarUrl={player.avatar}
+                                    status={statusFor(stat?.steam_persona_state ?? null)}
+                                    faceit={
+                                        stat?.faceit_skill_level && stat?.faceit_elo
+                                            ? { level: stat.faceit_skill_level, elo: stat.faceit_elo }
+                                            : null
+                                    }
+                                    playtimeLabel={playtimeLabel(stat?.playtime_2weeks_minutes ?? null)}
+                                />
                             </div>
-                        ))}
-                    </div>
-                </main>
-            ) : (
-                <main className="relative mx-auto flex max-w-2xl flex-col items-center gap-6 px-6 pt-20 pb-24 text-center">
-                    <Badge tone="info" className="animate-fade-in-up">
-                        Bucabull eSports
-                    </Badge>
-                    <Text variant="display" className="animate-fade-in-up" style={{ animationDelay: '80ms' }}>
-                        Steam status, Faceit rank, one roster.
-                    </Text>
-                    <Text
-                        variant="muted"
-                        className="animate-fade-in-up max-w-md"
-                        style={{ animationDelay: '160ms' }}
-                    >
-                        Sign in with Steam to create the team and start tracking who's online, ranked, and grinding.
-                    </Text>
-                    <div className="animate-fade-in-up" style={{ animationDelay: '240ms' }}>
-                        <SteamSignInButton href={route('steam.redirect')} />
-                    </div>
-                </main>
-            )}
+                        );
+                    })}
+                    {Array.from({ length: openSlots }).map((_, index) => (
+                        <div
+                            key={`open-${index}`}
+                            className="animate-fade-in-up"
+                            style={{ animationDelay: `${160 + (players.length + index) * 70}ms` }}
+                        >
+                            <EmptySlotCard />
+                        </div>
+                    ))}
+                </div>
+            </main>
         </div>
     );
 }

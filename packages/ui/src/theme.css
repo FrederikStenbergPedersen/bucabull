@@ -107,6 +107,16 @@
     }
 }
 
+@keyframes drift-c {
+    0%,
+    100% {
+        transform: translate(-50%, 0) scale(1);
+    }
+    50% {
+        transform: translate(-44%, -8%) scale(1.15);
+    }
+}
+
 @keyframes pulse-soft {
     0%,
     100% {
@@ -114,6 +124,31 @@
     }
     50% {
         opacity: 0.5;
+    }
+}
+
+@keyframes twinkle {
+    0%,
+    100% {
+        opacity: 0.15;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.3);
+    }
+}
+
+@keyframes grid-pan {
+    from {
+        background-position:
+            0 0,
+            0 0;
+    }
+    to {
+        background-position:
+            64px 64px,
+            64px 64px;
     }
 }
 
@@ -125,6 +160,10 @@
     animation: drift-b 28s ease-in-out infinite;
 }
 
+@utility animate-drift-c {
+    animation: drift-c 34s ease-in-out infinite;
+}
+
 @utility animate-fade-in-up {
     animation: fade-in-up 0.7s ease-out both;
 }
@@ -133,11 +172,22 @@
     animation: pulse-soft 2.5s ease-in-out infinite;
 }
 
+@utility animate-twinkle {
+    animation: twinkle 4s ease-in-out infinite;
+}
+
+@utility animate-grid-pan {
+    animation: grid-pan 50s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .animate-drift-a,
     .animate-drift-b,
+    .animate-drift-c,
     .animate-fade-in-up,
-    .animate-pulse-soft {
+    .animate-pulse-soft,
+    .animate-twinkle,
+    .animate-grid-pan {
         animation: none;
     }
 }
