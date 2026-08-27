@@ -13,6 +13,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Caddy on the host terminates TLS and reverse-proxies to this
+        // container — trust it so Request::isSecure()/getScheme() (which
+        // Socialite's Steam OpenID redirect/return_to URLs depend on)
+        // resolve correctly. Safe here: Caddy is the only ingress point,
+        // the app port is only published on 127.0.0.1.
+        $middleware->trustProxies(at: '*');
+
         $middleware->web(append: [
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,

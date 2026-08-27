@@ -1,0 +1,38 @@
+services:
+  app:
+    image: ghcr.io/frederikstenbergpedersen/bucabull:latest
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - '127.0.0.1:8080:8080'
+    depends_on:
+      - postgres
+
+  queue:
+    image: ghcr.io/frederikstenbergpedersen/bucabull:latest
+    command: php artisan queue:work --tries=3
+    restart: unless-stopped
+    env_file: ./.env
+    depends_on:
+      - postgres
+
+  scheduler:
+    image: ghcr.io/frederikstenbergpedersen/bucabull:latest
+    command: php artisan schedule:work
+    restart: unless-stopped
+    env_file: ./.env
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bucabull
+      POSTGRES_USER: bucabull
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:

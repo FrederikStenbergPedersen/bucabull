@@ -3,9 +3,9 @@ services:
         image: postgres:16
         restart: unless-stopped
         environment:
-            POSTGRES_DB: newapp
-            POSTGRES_USER: newapp
-            POSTGRES_PASSWORD: newapp
+            POSTGRES_DB: bucabull
+            POSTGRES_USER: bucabull
+            POSTGRES_PASSWORD: bucabull
         ports:
             - '127.0.0.1:5432:5432'
         volumes:

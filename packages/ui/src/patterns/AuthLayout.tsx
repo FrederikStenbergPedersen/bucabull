@@ -9,7 +9,7 @@ export interface AuthLayoutProps {
     appName?: string;
 }
 
-export function AuthLayout({ children, title, description, appName = 'newapp' }: AuthLayoutProps) {
+export function AuthLayout({ children, title, description, appName = 'Bucabull' }: AuthLayoutProps) {
     return (
         <div className="flex min-h-svh flex-col items-center justify-center gap-8 bg-background p-6">
             <div className="flex w-full max-w-sm flex-col gap-8">

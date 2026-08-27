@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "newapp/newapp",
+    "name": "bucabull/bucabull",
     "type": "project",
-    "description": "newapp",
+    "description": "bucabull",
     "keywords": [],
     "license": "proprietary",
     "require": {

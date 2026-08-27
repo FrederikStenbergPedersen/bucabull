@@ -111,8 +111,8 @@
         "paths": {
             "@/*": ["./resources/js/*"],
             "ziggy-js": ["./vendor/tightenco/ziggy"],
-            "@newapp/ui": ["./packages/ui/src/index.ts"],
-            "@newapp/ui/*": ["./packages/ui/src/*"]
+            "@bucabull/ui": ["./packages/ui/src/index.ts"],
+            "@bucabull/ui/*": ["./packages/ui/src/*"]
         },
         "jsx": "react-jsx"
     },

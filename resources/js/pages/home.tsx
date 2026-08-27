@@ -1,5 +1,5 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Badge, Button, RosterCard, Text, type BadgeProps } from '@newapp/ui';
+import { Badge, Button, RosterCard, Text, type BadgeProps } from '@bucabull/ui';
 
 import { type SharedData } from '@/types';
 

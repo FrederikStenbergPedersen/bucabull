@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import { Button, Card, FieldError, Input, Label, Text } from '@newapp/ui';
+import { Button, Card, FieldError, Input, Label, Text } from '@bucabull/ui';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 

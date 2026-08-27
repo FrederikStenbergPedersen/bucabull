@@ -23,7 +23,7 @@
     },
     "dependencies": {
         "@inertiajs/react": "^2.0.0",
-        "@newapp/ui": "*",
+        "@bucabull/ui": "*",
         "@tailwindcss/vite": "^4.3.3",
         "@types/react": "^19.0.3",
         "@types/react-dom": "^19.0.2",

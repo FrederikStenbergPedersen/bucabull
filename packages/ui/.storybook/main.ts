@@ -19,7 +19,7 @@ const config: StorybookConfig = {
             },
             optimizeDeps: {
                 ...viteConfig.optimizeDeps,
-                exclude: ['@newapp/ui'],
+                exclude: ['@bucabull/ui'],
             },
         };
     },

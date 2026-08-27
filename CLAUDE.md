@@ -1,4 +1,4 @@
-# newapp
+# bucabull
 
 Independent commercial product — not a fork or derivative of any other
 codebase. Laravel + Inertia.js + React (TypeScript) + Tailwind CSS +
@@ -23,7 +23,7 @@ this is foundation only (auth, team model, roster page).
 
 ## Component library is the only door in
 
-All UI must be built from `@newapp/ui` (`packages/ui/`). Never write raw
+All UI must be built from `@bucabull/ui` (`packages/ui/`). Never write raw
 Tailwind-styled JSX directly in `resources/js/pages/**` (or anywhere else in
 `resources/js`) for anything the library could reasonably provide.
 

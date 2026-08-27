@@ -11,5 +11,5 @@ export const sharedResolve = {
 export const sharedOptimizeDeps = {
     // the workspace package has no build output — let Vite transpile its
     // TSX source directly rather than treating it as an opaque pre-bundled dep
-    exclude: ['@newapp/ui'],
+    exclude: ['@bucabull/ui'],
 };
