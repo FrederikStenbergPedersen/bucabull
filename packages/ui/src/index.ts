@@ -8,8 +8,12 @@ export { Text } from './primitives/Text';
 export type { TextProps } from './primitives/Text';
 export { FieldError } from './primitives/FieldError';
 export { TextLink } from './primitives/TextLink';
+export { Badge } from './primitives/Badge';
+export type { BadgeProps } from './primitives/Badge';
 
 export { AuthLayout } from './patterns/AuthLayout';
 export type { AuthLayoutProps } from './patterns/AuthLayout';
+export { RosterCard } from './patterns/RosterCard';
+export type { RosterCardProps } from './patterns/RosterCard';
 
 export { cn } from './lib/cn';

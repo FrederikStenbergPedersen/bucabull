@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    'steam' => [
+        'client_id' => null,
+        'client_secret' => env('STEAM_CLIENT_SECRET'),
+        'redirect' => env('STEAM_REDIRECT_URI'),
+        'allowed_hosts' => array_filter([env('APP_DOMAIN')]),
+    ],
+
+    'faceit' => [
+        'key' => env('FACEIT_API_KEY'),
+    ],
+
 ];

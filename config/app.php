@@ -123,4 +123,17 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Home Team
+    |--------------------------------------------------------------------------
+    |
+    | The team shown on the public "/" page to logged-out visitors on this
+    | deployment (e.g. Bucabull on bucabull.com). Deployment-level config,
+    | not a per-team database flag — see App\Models\Team::home().
+    |
+    */
+
+    'home_team_slug' => env('HOME_TEAM_SLUG'),
+
 ];

@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Team;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,11 +13,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $owner = User::factory()->create(['nickname' => 'BucabullOwner']);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $team = Team::factory()->create([
+            'name' => 'Bucabull eSports',
+            'slug' => 'bucabull',
+            'owner_id' => $owner->id,
         ]);
+
+        $owner->update(['team_id' => $team->id, 'role' => 'owner']);
+
+        User::factory(4)->create(['team_id' => $team->id]);
     }
 }

@@ -4,6 +4,23 @@ Independent commercial product — not a fork or derivative of any other
 codebase. Laravel + Inertia.js + React (TypeScript) + Tailwind CSS +
 PostgreSQL.
 
+Bucabull eSports team platform (bucabull.com), eventually multi-team.
+**Auth is Steam-only** — no email/password, no registration form. Logged
+out, `/` shows the deployment's configured home team
+(`config('app.home_team_slug')`, see `App\Models\Team::home()`); logged in,
+it shows the viewer's own team instead — same page (`resources/js/pages/
+home.tsx`), conditional data, not two pages. A logged-in user with no team
+is redirected to `/team/join` to create or join one via invite code — teams
+are self-service, never console-assigned.
+
+Steam/Faceit data (online status, rank, playtime) is polled on a schedule
+(`app/Jobs/RefreshRosterStatsJob.php`, `routes/console.php`) into
+`player_stats`, never fetched live per-request.
+
+Strats, utility, the tactics board — the original stratbook-inspired
+feature set — is intentionally not built yet. Don't add it unless asked;
+this is foundation only (auth, team model, roster page).
+
 ## Component library is the only door in
 
 All UI must be built from `@newapp/ui` (`packages/ui/`). Never write raw
@@ -25,10 +42,10 @@ time.
 
 ## Stack notes
 
-- Auth backend (routes, controllers under `app/Http/Controllers/Auth`) is
-  Laravel's own plain controllers, not Fortify — this version of the
-  starter kit doesn't use Fortify. Leave it as-is; only the React page/layout
-  layer gets rebuilt on `@newapp/ui`.
+- Auth is `laravel/socialite` + `socialiteproviders/steam` (Steam uses
+  OpenID 2.0, not OAuth2 — single verification round-trip, no token
+  exchange). `SteamAuthController` handles redirect/callback;
+  `AuthenticatedSessionController` only handles logout now.
 - Tailwind v4 is CSS-first — there is no `tailwind.config.js`. Theme lives in
   `packages/ui/src/theme.css`, imported by both `resources/css/app.css` and
   Storybook's `packages/ui/.storybook/preview.tsx`. Never define colors

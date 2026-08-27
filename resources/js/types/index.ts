@@ -1,5 +1,5 @@
 export interface Auth {
-    user: User;
+    user: User | null;
 }
 
 export interface SharedData {
@@ -11,10 +11,11 @@ export interface SharedData {
 
 export interface User {
     id: number;
-    name: string;
-    email: string;
-    avatar?: string;
-    email_verified_at: string | null;
+    steam_id: string;
+    nickname: string;
+    avatar: string | null;
+    team_id: number | null;
+    role: string;
     created_at: string;
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
