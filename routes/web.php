@@ -16,15 +16,11 @@ Route::get('/', function () {
     $team = $user?->team ?? Team::home();
 
     // No home team exists yet (e.g. brand new deployment, nobody's created
-    // it via Steam login yet) — send guests to log in and create it, rather
-    // than a bare 404. Once it exists, "/" goes back to showing it publicly.
-    if (! $team) {
-        return $user ? to_route('team.join') : to_route('login');
-    }
-
+    // it via Steam login yet) — the page itself renders a landing hero with
+    // the Steam sign-in CTA in that case, rather than redirecting away.
     return Inertia::render('home', [
-        'team' => $team->load('users.playerStat'),
-        'isOwnTeam' => $user?->team_id === $team->id,
+        'team' => $team?->load('users.playerStat'),
+        'isOwnTeam' => $team ? $user?->team_id === $team->id : false,
     ]);
 })->name('home');
 

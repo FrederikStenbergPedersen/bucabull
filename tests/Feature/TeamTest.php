@@ -46,12 +46,13 @@ test('joining with an invalid invite code fails validation', function () {
     expect($user->team_id)->toBeNull();
 });
 
-test('a guest is redirected to login when no home team exists yet', function () {
+test('a guest sees the landing hero when no home team exists yet', function () {
     config(['app.home_team_slug' => 'bucabull']);
 
     $response = $this->get('/');
 
-    $response->assertRedirect(route('login'));
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page->component('home')->where('team', null)->where('isOwnTeam', false));
 });
 
 test('the home page shows the home team to a logged-out visitor', function () {
