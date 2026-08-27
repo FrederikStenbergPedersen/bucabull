@@ -1,4 +1,4 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { Button, Card, Text } from '@newapp/ui';
 
 import { type SharedData } from '@/types';
@@ -14,9 +14,9 @@ export default function Dashboard() {
                 <Text variant="muted" className="mt-2">
                     No features here yet — this is just the auth flow proving out the component library.
                 </Text>
-                <Link href={route('logout')} method="post" as="button" className="mt-6 inline-block">
-                    <Button variant="secondary">Log out</Button>
-                </Link>
+                <Button variant="secondary" className="mt-6" onClick={() => router.post(route('logout'))}>
+                    Log out
+                </Button>
             </Card>
         </div>
     );
