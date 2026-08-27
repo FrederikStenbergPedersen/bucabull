@@ -78,30 +78,9 @@
 }
 
 /*
- * Deliberately slow, ambient motion — a drifting background glow and a
- * gentle entrance for content. Never used for anything time-sensitive, so
- * disabling it under reduced-motion has no functional cost.
+ * Deliberately slow, ambient motion. Never used for anything time-sensitive,
+ * so disabling it under reduced-motion has no functional cost.
  */
-@keyframes drift-a {
-    0%,
-    100% {
-        transform: translate(0, 0) scale(1);
-    }
-    50% {
-        transform: translate(6%, 8%) scale(1.12);
-    }
-}
-
-@keyframes drift-b {
-    0%,
-    100% {
-        transform: translate(0, 0) scale(1);
-    }
-    50% {
-        transform: translate(-8%, 6%) scale(1.08);
-    }
-}
-
 @keyframes fade-in-up {
     from {
         opacity: 0;
@@ -110,16 +89,6 @@
     to {
         opacity: 1;
         transform: translateY(0);
-    }
-}
-
-@keyframes drift-c {
-    0%,
-    100% {
-        transform: translate(-50%, 0) scale(1);
-    }
-    50% {
-        transform: translate(-44%, -8%) scale(1.15);
     }
 }
 
@@ -158,18 +127,6 @@
     }
 }
 
-@utility animate-drift-a {
-    animation: drift-a 24s ease-in-out infinite;
-}
-
-@utility animate-drift-b {
-    animation: drift-b 28s ease-in-out infinite;
-}
-
-@utility animate-drift-c {
-    animation: drift-c 34s ease-in-out infinite;
-}
-
 @utility animate-fade-in-up {
     animation: fade-in-up 0.7s ease-out both;
 }
@@ -187,9 +144,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .animate-drift-a,
-    .animate-drift-b,
-    .animate-drift-c,
     .animate-fade-in-up,
     .animate-pulse-soft,
     .animate-twinkle,

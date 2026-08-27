@@ -10,10 +10,23 @@ const SPARKS = [
     { top: '8%', left: '55%', size: 2, duration: '5.3s', delay: '2s', tone: 'bg-accent' },
 ] as const;
 
+// Small, crisp-edged low-poly facets — the shattered-glass fragments
+// scattered across the team crest's background art, not a bold shape.
+const FACETS = [
+    { top: '4%', left: '6%', size: 130, rotate: -18, tone: 'bg-foreground/[0.035]', clip: 'polygon(0% 15%, 70% 0%, 100% 100%, 15% 85%)' },
+    { top: '58%', left: '-2%', size: 160, rotate: 8, tone: 'bg-foreground/[0.03]', clip: 'polygon(0% 0%, 100% 25%, 60% 100%, 0% 80%)' },
+    { top: '12%', left: '86%', size: 150, rotate: 24, tone: 'bg-accent-secondary/[0.07]', clip: 'polygon(20% 0%, 100% 10%, 80% 100%, 0% 70%)' },
+    { top: '68%', left: '90%', size: 140, rotate: -10, tone: 'bg-accent/[0.06]', clip: 'polygon(0% 20%, 80% 0%, 100% 90%, 20% 100%)' },
+    { top: '38%', left: '46%', size: 90, rotate: 32, tone: 'bg-accent-secondary/[0.05]', clip: 'polygon(50% 0%, 100% 40%, 70% 100%, 0% 65%)' },
+    { top: '82%', left: '30%', size: 110, rotate: -22, tone: 'bg-foreground/[0.03]', clip: 'polygon(10% 0%, 100% 20%, 85% 100%, 0% 85%)' },
+    { top: '2%', left: '38%', size: 80, rotate: 14, tone: 'bg-accent/[0.05]', clip: 'polygon(0% 0%, 100% 10%, 75% 100%, 15% 90%)' },
+] as const;
+
 /**
- * Shared decorative background: layered drifting glow, a faint animated
- * grid (echoes the team crest's cyber-grid texture), and twinkling spark
- * particles. Purely `pointer-events-none` chrome — safe behind any content.
+ * Shared decorative background: a faint animated grid, scattered low-poly
+ * facets, and twinkling spark particles — the same texture as the team
+ * crest's background art, at a fraction of the opacity. Purely
+ * `pointer-events-none` chrome — safe behind any content.
  */
 export function AmbientBackdrop() {
     return (
@@ -27,9 +40,20 @@ export function AmbientBackdrop() {
                 }}
             />
 
-            <div className="animate-drift-a absolute -top-40 -left-40 h-96 w-96 rounded-full bg-accent/25 blur-3xl" />
-            <div className="animate-drift-b absolute -top-24 right-0 h-80 w-80 rounded-full bg-accent-secondary/20 blur-3xl" />
-            <div className="animate-drift-c absolute top-1/3 left-1/2 h-72 w-72 rounded-full bg-accent-secondary/10 blur-3xl" />
+            {FACETS.map((facet, index) => (
+                <div
+                    key={index}
+                    className={cn('absolute', facet.tone)}
+                    style={{
+                        top: facet.top,
+                        left: facet.left,
+                        width: facet.size,
+                        height: facet.size,
+                        transform: `rotate(${facet.rotate}deg)`,
+                        clipPath: facet.clip,
+                    }}
+                />
+            ))}
 
             {SPARKS.map((spark, index) => (
                 <span
@@ -45,13 +69,6 @@ export function AmbientBackdrop() {
                     }}
                 />
             ))}
-
-            <div
-                className="absolute inset-0"
-                style={{
-                    background: 'radial-gradient(ellipse at center, transparent 35%, var(--color-background) 92%)',
-                }}
-            />
         </div>
     );
 }
