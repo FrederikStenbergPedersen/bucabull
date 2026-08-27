@@ -2,6 +2,7 @@
 @import '../../packages/ui/src/theme.css';
 
 @source '../../packages/ui/src';
+@source '../../packages/ui/.storybook';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
 @custom-variant dark (&:is(.dark *));

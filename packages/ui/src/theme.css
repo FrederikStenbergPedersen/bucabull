@@ -1,11 +1,15 @@
 /*
  * Single source of visual truth: the app (resources/css/app.css) and
  * Storybook (.storybook/preview.ts) both import this file, so they can
- * never drift. Mirrors packages/ui/src/tokens/*.ts — kept hand-in-sync
+ * never drift. Mirrors packages/ui/src/tokens/colors.ts — kept hand-in-sync
  * rather than generated, since the palette is still small.
+ *
+ * Colors are derived from the actual team logo (pixel-sampled): primary
+ * orange ~#f6520d (the bull), secondary blue ~#2ce3fc (the horns / "BUCA"
+ * half of the wordmark), dark navy-black background ~#0a0e15.
  */
 
-@theme {
+@theme inline {
     --font-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
     --font-heading: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
 
@@ -23,6 +27,8 @@
     --color-muted-foreground: var(--muted-foreground);
     --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);
+    --color-accent-secondary: var(--accent-secondary);
+    --color-accent-secondary-foreground: var(--accent-secondary-foreground);
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
     --color-ring: var(--ring);
@@ -30,33 +36,37 @@
 
 /* Dark is the primary design target; light is a fully-supported second mode. */
 :root {
-    --background: hsl(40, 20%, 99%);
-    --foreground: hsl(220, 9%, 10%);
+    --background: hsl(210, 20%, 98%);
+    --foreground: hsl(220, 15%, 10%);
     --card: hsl(0, 0%, 100%);
-    --card-foreground: hsl(220, 9%, 10%);
-    --border: hsl(220, 10%, 88%);
-    --input: hsl(220, 10%, 85%);
-    --muted: hsl(220, 10%, 94%);
-    --muted-foreground: hsl(220, 6%, 40%);
-    --accent: hsl(32, 90%, 45%);
+    --card-foreground: hsl(220, 15%, 10%);
+    --border: hsl(220, 14%, 88%);
+    --input: hsl(220, 14%, 85%);
+    --muted: hsl(220, 14%, 94%);
+    --muted-foreground: hsl(220, 8%, 40%);
+    --accent: hsl(18, 88%, 45%);
     --accent-foreground: hsl(0, 0%, 100%);
+    --accent-secondary: hsl(195, 88%, 38%);
+    --accent-secondary-foreground: hsl(0, 0%, 100%);
     --destructive: hsl(0, 72%, 48%);
     --destructive-foreground: hsl(0, 0%, 98%);
-    --ring: hsl(32, 90%, 45%);
+    --ring: hsl(18, 88%, 45%);
 }
 
 .dark {
-    --background: hsl(220, 9%, 7%);
+    --background: hsl(220, 20%, 6%);
     --foreground: hsl(0, 0%, 96%);
-    --card: hsl(220, 9%, 10%);
+    --card: hsl(220, 18%, 10%);
     --card-foreground: hsl(0, 0%, 96%);
-    --border: hsl(220, 8%, 18%);
-    --input: hsl(220, 8%, 20%);
-    --muted: hsl(220, 8%, 14%);
-    --muted-foreground: hsl(220, 6%, 62%);
-    --accent: hsl(38, 92%, 50%);
-    --accent-foreground: hsl(220, 9%, 9%);
+    --border: hsl(220, 16%, 18%);
+    --input: hsl(220, 16%, 20%);
+    --muted: hsl(220, 16%, 14%);
+    --muted-foreground: hsl(220, 10%, 62%);
+    --accent: hsl(20, 90%, 52%);
+    --accent-foreground: hsl(220, 15%, 9%);
+    --accent-secondary: hsl(187, 90%, 55%);
+    --accent-secondary-foreground: hsl(220, 15%, 9%);
     --destructive: hsl(0, 72%, 58%);
     --destructive-foreground: hsl(0, 0%, 98%);
-    --ring: hsl(38, 92%, 50%);
+    --ring: hsl(20, 90%, 52%);
 }

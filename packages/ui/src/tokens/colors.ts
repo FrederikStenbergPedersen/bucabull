@@ -1,37 +1,44 @@
 /**
- * Canonical color values. `theme.css` mirrors these as Tailwind v4 `@theme`
+ * Canonical color values, derived from the actual team logo (pixel-sampled,
+ * not guessed): primary orange ~#f6520d (the bull), secondary blue
+ * ~#2ce3fc (the horns / "BUCA" half of the wordmark), dark navy-black
+ * background ~#0a0e15. `theme.css` mirrors these as Tailwind v4 `@theme`
  * variables — if you change a value here, update theme.css to match (kept
  * hand-in-sync rather than generated, since the palette is still small).
  */
 export const colors = {
     dark: {
-        background: 'hsl(220, 9%, 7%)',
+        background: 'hsl(220, 20%, 6%)',
         foreground: 'hsl(0, 0%, 96%)',
-        card: 'hsl(220, 9%, 10%)',
+        card: 'hsl(220, 18%, 10%)',
         cardForeground: 'hsl(0, 0%, 96%)',
-        border: 'hsl(220, 8%, 18%)',
-        input: 'hsl(220, 8%, 20%)',
-        muted: 'hsl(220, 8%, 14%)',
-        mutedForeground: 'hsl(220, 6%, 62%)',
-        accent: 'hsl(38, 92%, 50%)',
-        accentForeground: 'hsl(220, 9%, 9%)',
+        border: 'hsl(220, 16%, 18%)',
+        input: 'hsl(220, 16%, 20%)',
+        muted: 'hsl(220, 16%, 14%)',
+        mutedForeground: 'hsl(220, 10%, 62%)',
+        accent: 'hsl(20, 90%, 52%)',
+        accentForeground: 'hsl(220, 15%, 9%)',
+        accentSecondary: 'hsl(187, 90%, 55%)',
+        accentSecondaryForeground: 'hsl(220, 15%, 9%)',
         destructive: 'hsl(0, 72%, 58%)',
         destructiveForeground: 'hsl(0, 0%, 98%)',
-        ring: 'hsl(38, 92%, 50%)',
+        ring: 'hsl(20, 90%, 52%)',
     },
     light: {
-        background: 'hsl(40, 20%, 99%)',
-        foreground: 'hsl(220, 9%, 10%)',
+        background: 'hsl(210, 20%, 98%)',
+        foreground: 'hsl(220, 15%, 10%)',
         card: 'hsl(0, 0%, 100%)',
-        cardForeground: 'hsl(220, 9%, 10%)',
-        border: 'hsl(220, 10%, 88%)',
-        input: 'hsl(220, 10%, 85%)',
-        muted: 'hsl(220, 10%, 94%)',
-        mutedForeground: 'hsl(220, 6%, 40%)',
-        accent: 'hsl(32, 90%, 45%)',
+        cardForeground: 'hsl(220, 15%, 10%)',
+        border: 'hsl(220, 14%, 88%)',
+        input: 'hsl(220, 14%, 85%)',
+        muted: 'hsl(220, 14%, 94%)',
+        mutedForeground: 'hsl(220, 8%, 40%)',
+        accent: 'hsl(18, 88%, 45%)',
         accentForeground: 'hsl(0, 0%, 100%)',
+        accentSecondary: 'hsl(195, 88%, 38%)',
+        accentSecondaryForeground: 'hsl(0, 0%, 100%)',
         destructive: 'hsl(0, 72%, 48%)',
         destructiveForeground: 'hsl(0, 0%, 98%)',
-        ring: 'hsl(32, 90%, 45%)',
+        ring: 'hsl(18, 88%, 45%)',
     },
 } as const;
