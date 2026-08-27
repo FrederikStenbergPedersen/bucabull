@@ -8,7 +8,11 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<NonNullable<ButtonProps['variant']>, string> = {
-    primary: 'bg-accent text-accent-foreground hover:brightness-110',
+    primary: cn(
+        'bg-gradient-to-b from-accent/90 via-accent to-accent/85 text-accent-foreground',
+        'shadow-[inset_0_1px_0_rgba(255,255,255,0.3),inset_0_-2px_3px_rgba(0,0,0,0.2)]',
+        'hover:brightness-110 active:brightness-95',
+    ),
     secondary: 'bg-muted text-foreground hover:bg-border',
     ghost: 'bg-transparent text-foreground hover:bg-muted',
 };

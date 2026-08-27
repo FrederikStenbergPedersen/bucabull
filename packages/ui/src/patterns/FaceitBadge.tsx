@@ -30,9 +30,12 @@ export function FaceitBadge({ level, elo, className }: FaceitBadgeProps) {
     return (
         <span
             className={cn('inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-medium', className)}
-            style={{ backgroundColor: `${color}26`, color }}
+            style={{ background: `linear-gradient(to bottom, ${color}33, ${color}18)`, color }}
         >
-            <span className="size-1.5 rounded-full" style={{ backgroundColor: color }} />
+            <span
+                className="size-1.5 rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),inset_0_-1px_1px_rgba(0,0,0,0.35)]"
+                style={{ backgroundColor: color }}
+            />
             Faceit {level} · {elo}
         </span>
     );

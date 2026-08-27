@@ -7,9 +7,9 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 const toneClasses: Record<NonNullable<BadgeProps['tone']>, string> = {
-    positive: 'bg-positive/15 text-positive',
-    negative: 'bg-destructive/15 text-destructive',
-    info: 'bg-accent-secondary/15 text-accent-secondary',
+    positive: 'bg-gradient-to-b from-positive/20 to-positive/10 text-positive',
+    negative: 'bg-gradient-to-b from-destructive/20 to-destructive/10 text-destructive',
+    info: 'bg-gradient-to-b from-accent-secondary/20 to-accent-secondary/10 text-accent-secondary',
     neutral: 'bg-muted text-foreground',
     muted: 'bg-transparent text-muted-foreground border border-border',
 };
@@ -28,7 +28,12 @@ export function Badge({ className, tone = 'neutral', children, ...props }: Badge
             className={cn('inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-medium', toneClasses[tone], className)}
             {...props}
         >
-            <span className={cn('size-1.5 rounded-full', dotClasses[tone])} />
+            <span
+                className={cn(
+                    'size-1.5 rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),inset_0_-1px_1px_rgba(0,0,0,0.35)]',
+                    dotClasses[tone],
+                )}
+            />
             {children}
         </span>
     );
