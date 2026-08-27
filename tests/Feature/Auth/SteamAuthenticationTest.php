@@ -1,10 +1,16 @@
 <?php
 
+use App\Jobs\RefreshRosterStatsJob;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Support\Facades\Queue;
 use Laravel\Socialite\Contracts\Provider;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as SocialiteUser;
+
+beforeEach(function () {
+    Queue::fake();
+});
 
 function fakeSteamUser(string $steamId, string $nickname = 'Tester'): void
 {
@@ -32,6 +38,7 @@ test('a new steam login creates a user and sends them to team join', function ()
     expect(User::where('steam_id', '76561197960265729')->first())
         ->nickname->toBe('NewPlayer')
         ->team_id->toBeNull();
+    Queue::assertPushed(RefreshRosterStatsJob::class);
 });
 
 test('a returning steam login with a team goes to the home page', function () {

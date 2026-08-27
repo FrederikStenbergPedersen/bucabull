@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\RefreshRosterStatsJob;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +35,8 @@ class SteamAuthController extends Controller
         );
 
         Auth::login($user, remember: true);
+
+        RefreshRosterStatsJob::dispatch();
 
         return $user->team_id
             ? redirect()->intended(route('home', absolute: false))

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\PlayerStat;
 use App\Models\Team;
 use App\Models\User;
 
@@ -74,4 +75,17 @@ test('the home page shows the viewer\'s own team when logged in', function () {
     $response = $this->actingAs($user)->get('/');
 
     $response->assertInertia(fn ($page) => $page->component('home')->where('team.name', 'My Own Team')->where('isOwnTeam', true));
+});
+
+test('a player\'s stats are serialized as player_stat, matching what the frontend reads', function () {
+    $team = Team::factory()->create(['slug' => 'bucabull']);
+    $user = User::factory()->create(['team_id' => $team->id]);
+    PlayerStat::create(['user_id' => $user->id, 'steam_persona_state' => 1]);
+    config(['app.home_team_slug' => 'bucabull']);
+
+    $response = $this->get('/');
+
+    $response->assertInertia(
+        fn ($page) => $page->component('home')->where('team.users.0.player_stat.steam_persona_state', 1),
+    );
 });

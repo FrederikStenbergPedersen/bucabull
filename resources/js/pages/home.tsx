@@ -19,7 +19,7 @@ interface Player {
     id: number;
     nickname: string;
     avatar: string | null;
-    playerStat: PlayerStat | null;
+    player_stat: PlayerStat | null;
 }
 
 interface Team {
@@ -130,7 +130,7 @@ export default function Home({ team, isOwnTeam }: HomeProps) {
 
                 <div className="flex flex-col gap-3">
                     {players.map((player, index) => {
-                        const stat = player.playerStat;
+                        const stat = player.player_stat;
                         return (
                             <div
                                 key={player.id}
