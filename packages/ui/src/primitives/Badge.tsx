@@ -14,7 +14,7 @@ const toneClasses: Record<NonNullable<BadgeProps['tone']>, string> = {
 };
 
 const dotClasses: Record<NonNullable<BadgeProps['tone']>, string> = {
-    positive: 'bg-accent',
+    positive: 'bg-accent animate-pulse-soft',
     info: 'bg-accent-secondary',
     neutral: 'bg-foreground',
     muted: 'bg-muted-foreground',

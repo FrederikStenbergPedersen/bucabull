@@ -1,7 +1,10 @@
-import { Badge, Button, RosterCard, SteamSignInButton, Text, type BadgeProps } from '@bucabull/ui';
+import { Badge, Button, EmptySlotCard, RosterCard, SteamSignInButton, Text, type BadgeProps } from '@bucabull/ui';
 import { Head, router, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 
 import { type SharedData } from '@/types';
+
+const ROSTER_SIZE = 5;
 
 interface PlayerStat {
     steam_persona_state: number | null;
@@ -52,19 +55,48 @@ function playtimeLabel(minutes: number | null) {
     return `${(minutes / 60).toFixed(1)}h · last 2 weeks`;
 }
 
+function InviteCode({ code }: { code: string }) {
+    const [copied, setCopied] = useState(false);
+
+    async function copy() {
+        await navigator.clipboard.writeText(code);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+    }
+
+    return (
+        <button
+            type="button"
+            onClick={copy}
+            className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-dashed border-border px-3 py-1.5 text-sm transition-colors hover:border-accent-secondary"
+        >
+            <Text as="span" variant="muted">
+                Invite code
+            </Text>
+            <Text as="span" className="font-mono tracking-widest">
+                {code}
+            </Text>
+            <Text as="span" variant="muted">
+                {copied ? 'Copied!' : 'Copy'}
+            </Text>
+        </button>
+    );
+}
+
 export default function Home({ team, isOwnTeam }: HomeProps) {
     const { auth } = usePage<SharedData>().props;
+    const openSlots = team ? Math.max(0, ROSTER_SIZE - team.users.length) : 0;
 
     return (
         <div className="relative min-h-svh overflow-hidden bg-background">
             <Head title={team?.name ?? 'Bucabull eSports'} />
 
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                <div className="absolute -top-40 -left-40 h-96 w-96 rounded-full bg-accent/25 blur-3xl" />
-                <div className="absolute -top-24 right-0 h-96 w-96 rounded-full bg-accent-secondary/20 blur-3xl" />
+                <div className="animate-drift-a absolute -top-40 -left-40 h-96 w-96 rounded-full bg-accent/25 blur-3xl" />
+                <div className="animate-drift-b absolute -top-24 right-0 h-96 w-96 rounded-full bg-accent-secondary/20 blur-3xl" />
             </div>
 
-            <header className="relative mx-auto flex max-w-3xl items-center justify-between p-6">
+            <header className="animate-fade-in-up relative mx-auto flex max-w-3xl items-center justify-between p-6">
                 <Text variant="subheading" className="tracking-wide uppercase">
                     Bucabull
                 </Text>
@@ -77,7 +109,10 @@ export default function Home({ team, isOwnTeam }: HomeProps) {
 
             {team ? (
                 <main className="relative mx-auto flex max-w-3xl flex-col gap-6 px-6 pb-16">
-                    <div className="flex flex-wrap items-end justify-between gap-4">
+                    <div
+                        className="animate-fade-in-up flex flex-wrap items-end justify-between gap-4"
+                        style={{ animationDelay: '80ms' }}
+                    >
                         <div>
                             <Badge tone="info" className="mb-3">
                                 {isOwnTeam ? 'Your team' : 'Home team'}
@@ -90,37 +125,61 @@ export default function Home({ team, isOwnTeam }: HomeProps) {
                                 <SteamSignInButton href={route('steam.redirect')} />
                             </div>
                         )}
+                        {isOwnTeam && auth?.user && <InviteCode code={team.invite_code} />}
                     </div>
 
                     <div className="flex flex-col gap-3">
-                        {team.users.map((player) => {
+                        {team.users.map((player, index) => {
                             const stat = player.playerStat;
                             return (
-                                <RosterCard
+                                <div
                                     key={player.id}
-                                    name={player.nickname}
-                                    avatarUrl={player.avatar}
-                                    status={statusFor(stat?.steam_persona_state ?? null)}
-                                    faceit={
-                                        stat?.faceit_skill_level && stat?.faceit_elo
-                                            ? { level: stat.faceit_skill_level, elo: stat.faceit_elo }
-                                            : null
-                                    }
-                                    playtimeLabel={playtimeLabel(stat?.playtime_2weeks_minutes ?? null)}
-                                />
+                                    className="animate-fade-in-up"
+                                    style={{ animationDelay: `${160 + index * 70}ms` }}
+                                >
+                                    <RosterCard
+                                        name={player.nickname}
+                                        avatarUrl={player.avatar}
+                                        status={statusFor(stat?.steam_persona_state ?? null)}
+                                        faceit={
+                                            stat?.faceit_skill_level && stat?.faceit_elo
+                                                ? { level: stat.faceit_skill_level, elo: stat.faceit_elo }
+                                                : null
+                                        }
+                                        playtimeLabel={playtimeLabel(stat?.playtime_2weeks_minutes ?? null)}
+                                    />
+                                </div>
                             );
                         })}
-                        {team.users.length === 0 && <Text variant="muted">No players on this team yet.</Text>}
+                        {Array.from({ length: openSlots }).map((_, index) => (
+                            <div
+                                key={`open-${index}`}
+                                className="animate-fade-in-up"
+                                style={{ animationDelay: `${160 + (team.users.length + index) * 70}ms` }}
+                            >
+                                <EmptySlotCard />
+                            </div>
+                        ))}
                     </div>
                 </main>
             ) : (
                 <main className="relative mx-auto flex max-w-2xl flex-col items-center gap-6 px-6 pt-20 pb-24 text-center">
-                    <Badge tone="info">Bucabull eSports</Badge>
-                    <Text variant="display">Steam status, Faceit rank, one roster.</Text>
-                    <Text variant="muted" className="max-w-md">
+                    <Badge tone="info" className="animate-fade-in-up">
+                        Bucabull eSports
+                    </Badge>
+                    <Text variant="display" className="animate-fade-in-up" style={{ animationDelay: '80ms' }}>
+                        Steam status, Faceit rank, one roster.
+                    </Text>
+                    <Text
+                        variant="muted"
+                        className="animate-fade-in-up max-w-md"
+                        style={{ animationDelay: '160ms' }}
+                    >
                         Sign in with Steam to create the team and start tracking who's online, ranked, and grinding.
                     </Text>
-                    <SteamSignInButton href={route('steam.redirect')} />
+                    <div className="animate-fade-in-up" style={{ animationDelay: '240ms' }}>
+                        <SteamSignInButton href={route('steam.redirect')} />
+                    </div>
                 </main>
             )}
         </div>

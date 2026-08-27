@@ -16,5 +16,6 @@ export { AuthLayout } from './patterns/AuthLayout';
 export type { AuthLayoutProps } from './patterns/AuthLayout';
 export { RosterCard } from './patterns/RosterCard';
 export type { RosterCardProps } from './patterns/RosterCard';
+export { EmptySlotCard } from './patterns/EmptySlotCard';
 
 export { cn } from './lib/cn';

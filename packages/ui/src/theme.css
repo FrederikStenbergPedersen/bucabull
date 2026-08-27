@@ -70,3 +70,74 @@
     --destructive-foreground: hsl(0, 0%, 98%);
     --ring: hsl(20, 90%, 52%);
 }
+
+/*
+ * Deliberately slow, ambient motion — a drifting background glow and a
+ * gentle entrance for content. Never used for anything time-sensitive, so
+ * disabling it under reduced-motion has no functional cost.
+ */
+@keyframes drift-a {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+    50% {
+        transform: translate(6%, 8%) scale(1.12);
+    }
+}
+
+@keyframes drift-b {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+    50% {
+        transform: translate(-8%, 6%) scale(1.08);
+    }
+}
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse-soft {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@utility animate-drift-a {
+    animation: drift-a 24s ease-in-out infinite;
+}
+
+@utility animate-drift-b {
+    animation: drift-b 28s ease-in-out infinite;
+}
+
+@utility animate-fade-in-up {
+    animation: fade-in-up 0.7s ease-out both;
+}
+
+@utility animate-pulse-soft {
+    animation: pulse-soft 2.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-drift-a,
+    .animate-drift-b,
+    .animate-fade-in-up,
+    .animate-pulse-soft {
+        animation: none;
+    }
+}
