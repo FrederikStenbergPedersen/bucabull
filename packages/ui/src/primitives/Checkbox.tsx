@@ -8,7 +8,7 @@ export const Checkbox = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInp
         ref={ref}
         type="checkbox"
         className={cn(
-            'size-5 rounded-sm border border-input accent-accent',
+            'size-5 cursor-pointer rounded-sm border border-input accent-accent',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
             'disabled:cursor-not-allowed disabled:opacity-50',
             className,
