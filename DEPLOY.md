@@ -90,7 +90,7 @@ cron (Laravel's `schedule:work` runs the scheduler continuously).
    - `SSH_USER` — e.g. `root`
    - `SSH_PRIVATE_KEY` — contents of `~/.ssh/bucabull_deploy` (the private key)
 
-   Once these exist, `git push` to `master` builds the image, pushes to
+   Once these exist, `git push` to `main` builds the image, pushes to
    GHCR, and deploys — including running `php artisan migrate --force` —
    automatically, every time.
 
