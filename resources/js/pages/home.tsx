@@ -1,5 +1,5 @@
+import { Button, RosterCard, Text, type BadgeProps } from '@bucabull/ui';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Badge, Button, RosterCard, Text, type BadgeProps } from '@bucabull/ui';
 
 import { type SharedData } from '@/types';
 
@@ -56,7 +56,7 @@ export default function Home({ team, isOwnTeam }: HomeProps) {
     const { auth } = usePage<SharedData>().props;
 
     return (
-        <div className="min-h-svh bg-background p-6">
+        <div className="bg-background min-h-svh p-6">
             <Head title={team.name} />
 
             <header className="mx-auto flex max-w-3xl items-center justify-between">
@@ -87,11 +87,7 @@ export default function Home({ team, isOwnTeam }: HomeProps) {
                             name={player.nickname}
                             avatarUrl={player.avatar}
                             status={statusFor(stat?.steam_persona_state ?? null)}
-                            faceit={
-                                stat?.faceit_skill_level && stat?.faceit_elo
-                                    ? { level: stat.faceit_skill_level, elo: stat.faceit_elo }
-                                    : null
-                            }
+                            faceit={stat?.faceit_skill_level && stat?.faceit_elo ? { level: stat.faceit_skill_level, elo: stat.faceit_elo } : null}
                             playtimeLabel={playtimeLabel(stat?.playtime_2weeks_minutes ?? null)}
                         />
                     );

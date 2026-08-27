@@ -1,5 +1,5 @@
-import { Head } from '@inertiajs/react';
 import { AuthLayout, Button } from '@bucabull/ui';
+import { Head } from '@inertiajs/react';
 
 export default function Login() {
     return (

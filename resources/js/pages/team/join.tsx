@@ -1,5 +1,5 @@
-import { Head, useForm } from '@inertiajs/react';
 import { Button, Card, FieldError, Input, Label, Text } from '@bucabull/ui';
+import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
@@ -18,7 +18,7 @@ export default function TeamJoin() {
     };
 
     return (
-        <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6">
+        <div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6">
             <Head title="Join a team" />
             <div className="flex w-full max-w-sm flex-col gap-6">
                 <div className="text-center">
