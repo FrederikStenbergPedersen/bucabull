@@ -22,6 +22,8 @@ export const colors = {
         accentSecondaryForeground: 'hsl(220, 15%, 9%)',
         destructive: 'hsl(0, 72%, 58%)',
         destructiveForeground: 'hsl(0, 0%, 98%)',
+        positive: 'hsl(142, 71%, 45%)',
+        positiveForeground: 'hsl(220, 15%, 9%)',
         ring: 'hsl(20, 90%, 52%)',
     },
     light: {
@@ -39,6 +41,8 @@ export const colors = {
         accentSecondaryForeground: 'hsl(0, 0%, 100%)',
         destructive: 'hsl(0, 72%, 48%)',
         destructiveForeground: 'hsl(0, 0%, 98%)',
+        positive: 'hsl(142, 71%, 36%)',
+        positiveForeground: 'hsl(0, 0%, 100%)',
         ring: 'hsl(18, 88%, 45%)',
     },
 } as const;

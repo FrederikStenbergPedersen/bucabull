@@ -1,6 +1,7 @@
 import { Badge, type BadgeProps } from '../primitives/Badge';
 import { Card } from '../primitives/Card';
 import { Text } from '../primitives/Text';
+import { FaceitBadge } from './FaceitBadge';
 
 export interface RosterCardProps {
     name: string;
@@ -24,7 +25,7 @@ export function RosterCard({ name, avatarUrl, status, faceit, playtimeLabel }: R
                 </Text>
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                     <Badge tone={status.tone}>{status.label}</Badge>
-                    {faceit && <Badge tone="info">Faceit {faceit.level} · {faceit.elo}</Badge>}
+                    {faceit && <FaceitBadge level={faceit.level} elo={faceit.elo} />}
                 </div>
                 {playtimeLabel && (
                     <Text variant="muted" className="mt-1">

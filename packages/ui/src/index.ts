@@ -18,5 +18,7 @@ export { RosterCard } from './patterns/RosterCard';
 export type { RosterCardProps } from './patterns/RosterCard';
 export { EmptySlotCard } from './patterns/EmptySlotCard';
 export { AmbientBackdrop } from './patterns/AmbientBackdrop';
+export { FaceitBadge } from './patterns/FaceitBadge';
+export type { FaceitBadgeProps } from './patterns/FaceitBadge';
 
 export { cn } from './lib/cn';

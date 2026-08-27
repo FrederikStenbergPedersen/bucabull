@@ -14,6 +14,10 @@ export const Positive: Story = {
     args: { children: 'Online', tone: 'positive' },
 };
 
+export const Negative: Story = {
+    args: { children: 'Offline', tone: 'negative' },
+};
+
 export const Info: Story = {
     args: { children: 'Faceit 9 · 2450', tone: 'info' },
 };
@@ -23,5 +27,5 @@ export const Neutral: Story = {
 };
 
 export const Muted: Story = {
-    args: { children: 'Offline', tone: 'muted' },
+    args: { children: 'Snooze', tone: 'muted' },
 };

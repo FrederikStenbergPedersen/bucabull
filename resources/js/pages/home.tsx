@@ -36,7 +36,7 @@ interface HomeProps {
 }
 
 const PERSONA_STATES: Record<number, { label: string; tone: BadgeProps['tone'] }> = {
-    0: { label: 'Offline', tone: 'muted' },
+    0: { label: 'Offline', tone: 'negative' },
     1: { label: 'Online', tone: 'positive' },
     2: { label: 'Busy', tone: 'neutral' },
     3: { label: 'Away', tone: 'neutral' },

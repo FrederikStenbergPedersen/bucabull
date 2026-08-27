@@ -3,18 +3,20 @@ import { HTMLAttributes } from 'react';
 import { cn } from '../lib/cn';
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-    tone?: 'positive' | 'info' | 'neutral' | 'muted';
+    tone?: 'positive' | 'negative' | 'info' | 'neutral' | 'muted';
 }
 
 const toneClasses: Record<NonNullable<BadgeProps['tone']>, string> = {
-    positive: 'bg-accent/15 text-accent',
+    positive: 'bg-positive/15 text-positive',
+    negative: 'bg-destructive/15 text-destructive',
     info: 'bg-accent-secondary/15 text-accent-secondary',
     neutral: 'bg-muted text-foreground',
     muted: 'bg-transparent text-muted-foreground border border-border',
 };
 
 const dotClasses: Record<NonNullable<BadgeProps['tone']>, string> = {
-    positive: 'bg-accent animate-pulse-soft',
+    positive: 'bg-positive animate-pulse-soft',
+    negative: 'bg-destructive',
     info: 'bg-accent-secondary',
     neutral: 'bg-foreground',
     muted: 'bg-muted-foreground',
