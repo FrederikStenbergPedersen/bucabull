@@ -1,4 +1,4 @@
-import { AmbientBackdrop, Badge, Button, EmptySlotCard, RosterCard, SteamSignInButton, Text, type BadgeProps } from '@bucabull/ui';
+import { AmbientBackdrop, Badge, Button, EmptySlotCard, JoinCta, RosterCard, Text, type BadgeProps } from '@bucabull/ui';
 import { Head, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -90,7 +90,7 @@ export default function Home({ team, isOwnTeam }: HomeProps) {
 
     return (
         <div className="relative min-h-svh overflow-hidden bg-background">
-            <Head title={team?.name ?? 'Bucabull eSports'} />
+            <Head />
 
             <AmbientBackdrop />
 
@@ -119,14 +119,14 @@ export default function Home({ team, isOwnTeam }: HomeProps) {
                             Steam status, Faceit rank, one roster.
                         </Text>
                     </div>
-                    {!auth?.user && (
-                        <div className="flex flex-col items-start gap-2">
-                            <Text variant="muted">Sign in to access the team's features</Text>
-                            <SteamSignInButton href={route('steam.redirect')} />
-                        </div>
-                    )}
                     {isOwnTeam && auth?.user && team && <InviteCode code={team.invite_code} />}
                 </div>
+
+                {!auth?.user && (
+                    <div className="animate-fade-in-up" style={{ animationDelay: '120ms' }}>
+                        <JoinCta href={route('steam.redirect')} />
+                    </div>
+                )}
 
                 <div className="flex flex-col gap-3">
                     {players.map((player, index) => {

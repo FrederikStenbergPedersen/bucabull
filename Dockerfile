@@ -2,6 +2,8 @@
 
 FROM node:22-alpine AS assets
 WORKDIR /app
+ARG VITE_APP_NAME=Bucabull
+ENV VITE_APP_NAME=$VITE_APP_NAME
 COPY package.json package-lock.json ./
 COPY packages/ui/package.json packages/ui/package.json
 COPY . .

@@ -20,5 +20,7 @@ export { EmptySlotCard } from './patterns/EmptySlotCard';
 export { AmbientBackdrop } from './patterns/AmbientBackdrop';
 export { FaceitBadge } from './patterns/FaceitBadge';
 export type { FaceitBadgeProps } from './patterns/FaceitBadge';
+export { JoinCta } from './patterns/JoinCta';
+export type { JoinCtaProps } from './patterns/JoinCta';
 
 export { cn } from './lib/cn';
