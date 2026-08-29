@@ -94,12 +94,32 @@ cron (Laravel's `schedule:work` runs the scheduler continuously).
    GHCR, and deploys — including running `php artisan migrate --force` —
    automatically, every time.
 
-6. **Backups** — self-hosted Postgres has no automatic backups:
+6. **Backups** — self-hosted Postgres has no automatic backups. Also
+   turn on your host's own server/disk-level backup or snapshot feature
+   (most VPS providers have one) — `scripts/backup-postgres.sh` alone
+   only protects the database, and still writes to the same disk unless
+   you also configure off-box shipping below.
 
    ```bash
+   mkdir -p /var/backups/bucabull
    crontab -e
    # add:
    0 3 * * * /var/www/bucabull/scripts/backup-postgres.sh >> /var/log/bucabull-backup.log 2>&1
+   ```
+
+   Optional but recommended — ship the dump off-box too, so a lost VPS
+   doesn't take the backups with it. The script is provider-agnostic: it
+   shells out to `rclone` against whatever remote you've configured, so
+   any provider `rclone` supports (S3-compatible object storage, SFTP,
+   B2, etc.) works without touching the script.
+
+   ```bash
+   # install rclone, then configure a remote interactively:
+   rclone config
+   # note the remote name you give it, e.g. "backups"
+
+   # point the backup script at it:
+   echo 'BACKUP_RCLONE_REMOTE="backups:bucabull"' | sudo tee /etc/bucabull-backup.env
    ```
 
 ## Creating the real roster
