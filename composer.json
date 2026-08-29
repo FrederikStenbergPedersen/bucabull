@@ -4,7 +4,7 @@
     "type": "project",
     "description": "bucabull",
     "keywords": [],
-    "license": "proprietary",
+    "license": "AGPL-3.0-only",
     "require": {
         "php": "^8.2",
         "inertiajs/inertia-laravel": "^2.0",

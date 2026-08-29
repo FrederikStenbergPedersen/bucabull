@@ -40,6 +40,24 @@ This is deliberate: the point is a coherent, deliberately-designed product
 that never drifts into generic shadcn/AI-generated-looking UI one page at a
 time.
 
+## Working process
+
+Feature requests, bugs, and other planned work are tracked as GitHub
+issues on this repo, not in an external tool (Linear, Trello, etc.).
+When asked to log, file, or track something, create/update a GitHub
+issue (`gh issue create` / `gh issue list`) rather than a local doc or
+TODO list. This also keeps the project in a state that's ready to go
+open-source later without a tracker migration.
+
+The codebase is licensed AGPL-3.0-only (see `LICENSE`): open to use,
+forking, and contributions, but anyone running a modified version as a
+network service must publish that version's source too — this is what
+keeps someone from cloning bucabull, hosting it on another domain, and
+selling it as a closed competing product. Paid features (planned: stat
+calculation, AI features) are meant to live in a separate private
+package once built, not in this repo — that's what actually protects
+the revenue-bearing code, not the license terms.
+
 ## Stack notes
 
 - Auth is `laravel/socialite` + `socialiteproviders/steam` (Steam uses
