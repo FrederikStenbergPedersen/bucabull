@@ -3,8 +3,8 @@ import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { cn } from '../lib/cn';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'secondary' | 'ghost';
-    size?: 'sm' | 'md';
+    variant?: 'primary' | 'secondary' | 'ghost' | 'destructive';
+    size?: 'sm' | 'md' | 'icon';
 }
 
 const variantClasses: Record<NonNullable<ButtonProps['variant']>, string> = {
@@ -15,11 +15,17 @@ const variantClasses: Record<NonNullable<ButtonProps['variant']>, string> = {
     ),
     secondary: 'bg-muted text-foreground hover:bg-border',
     ghost: 'bg-transparent text-foreground hover:bg-muted',
+    destructive: cn(
+        'bg-gradient-to-b from-destructive/90 via-destructive to-destructive/85 text-destructive-foreground',
+        'shadow-[inset_0_1px_0_rgba(255,255,255,0.3),inset_0_-2px_3px_rgba(0,0,0,0.2)]',
+        'hover:brightness-110 active:brightness-95',
+    ),
 };
 
 const sizeClasses: Record<NonNullable<ButtonProps['size']>, string> = {
     sm: 'h-8 px-3 text-sm',
     md: 'h-10 px-4 text-sm',
+    icon: 'size-8 p-0',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

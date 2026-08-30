@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\GrenadeController;
 use App\Http\Controllers\TeamController;
+use App\Http\Middleware\EnsureUserHasTeam;
 use App\Models\Team;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +30,14 @@ Route::middleware('auth')->group(function () {
     Route::get('team/join', [TeamController::class, 'join'])->name('team.join');
     Route::post('team', [TeamController::class, 'store'])->name('team.store');
     Route::post('team/join', [TeamController::class, 'joinByCode'])->name('team.joinByCode');
+});
+
+Route::middleware(['auth', EnsureUserHasTeam::class])->prefix('team')->name('team.')->group(function () {
+    Route::get('grenades', [GrenadeController::class, 'index'])->name('grenades.index');
+    Route::post('grenades', [GrenadeController::class, 'store'])->name('grenades.store');
+    Route::put('grenades/{grenade}', [GrenadeController::class, 'update'])->name('grenades.update');
+    Route::delete('grenades/{grenade}', [GrenadeController::class, 'destroy'])->name('grenades.destroy');
+    Route::delete('grenades/{grenade}/screenshots/{screenshot}', [GrenadeController::class, 'destroyScreenshot'])->name('grenades.screenshots.destroy');
 });
 
 require __DIR__.'/auth.php';

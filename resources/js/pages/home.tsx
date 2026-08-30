@@ -1,7 +1,8 @@
-import { AmbientBackdrop, Badge, Button, EmptySlotCard, JoinCta, RosterCard, Text, type BadgeProps } from '@bucabull/ui';
-import { Head, router, usePage } from '@inertiajs/react';
+import { Badge, EmptySlotCard, JoinCta, RosterCard, TeamLayout, Text, type BadgeProps } from '@bucabull/ui';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
+import { useTeamNav } from '@/hooks/use-team-nav';
 import { type SharedData } from '@/types';
 
 const ROSTER_SIZE = 5;
@@ -68,7 +69,7 @@ function InviteCode({ code }: { code: string }) {
         <button
             type="button"
             onClick={copy}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-dashed border-border px-3 py-1.5 text-sm transition-colors hover:border-accent-secondary"
+            className="border-border hover:border-accent-secondary inline-flex cursor-pointer items-center gap-2 rounded-md border border-dashed px-3 py-1.5 text-sm transition-colors"
         >
             <Text as="span" variant="muted">
                 Invite code
@@ -87,81 +88,54 @@ export default function Home({ team, isOwnTeam }: HomeProps) {
     const { auth } = usePage<SharedData>().props;
     const players = team?.users ?? [];
     const openSlots = Math.max(0, ROSTER_SIZE - players.length);
+    const navItems = useTeamNav();
 
     return (
-        <div className="relative min-h-svh overflow-hidden bg-background">
+        <TeamLayout navItems={navItems} onLogout={auth?.user ? () => router.post(route('logout')) : undefined} linkAs={Link}>
             <Head />
 
-            <AmbientBackdrop />
-
-            <header className="animate-fade-in-up relative mx-auto flex max-w-3xl items-center justify-between p-6">
-                <Text variant="subheading" className="tracking-wide uppercase">
-                    Bucabull
-                </Text>
-                {auth?.user && (
-                    <Button variant="secondary" onClick={() => router.post(route('logout'))}>
-                        Log out
-                    </Button>
-                )}
-            </header>
-
-            <main className="relative mx-auto flex max-w-3xl flex-col gap-6 px-6 pb-16">
-                <div
-                    className="animate-fade-in-up flex flex-wrap items-end justify-between gap-4"
-                    style={{ animationDelay: '80ms' }}
-                >
-                    <div>
-                        <Badge tone="info" className="mb-3">
-                            {team ? (isOwnTeam ? 'Your team' : 'Home team') : 'Bucabull eSports'}
-                        </Badge>
-                        <Text variant="display">{team?.name ?? 'Bucabull'}</Text>
-                        <Text variant="muted" className="mt-2">
-                            Steam status, Faceit rank, one roster.
-                        </Text>
-                    </div>
-                    {isOwnTeam && auth?.user && team && <InviteCode code={team.invite_code} />}
+            <div className="animate-fade-in-up flex flex-wrap items-end justify-between gap-4" style={{ animationDelay: '80ms' }}>
+                <div>
+                    <Badge tone="info" className="mb-3">
+                        {team ? (isOwnTeam ? 'Your team' : 'Home team') : 'Bucabull eSports'}
+                    </Badge>
+                    <Text variant="display">{team?.name ?? 'Bucabull'}</Text>
+                    <Text variant="muted" className="mt-2">
+                        Steam status, Faceit rank, one roster.
+                    </Text>
                 </div>
+                {isOwnTeam && auth?.user && team && <InviteCode code={team.invite_code} />}
+            </div>
 
-                {!auth?.user && (
-                    <div className="animate-fade-in-up" style={{ animationDelay: '120ms' }}>
-                        <JoinCta href={route('steam.redirect')} />
-                    </div>
-                )}
+            {!auth?.user && (
+                <div className="animate-fade-in-up" style={{ animationDelay: '120ms' }}>
+                    <JoinCta href={route('steam.redirect')} />
+                </div>
+            )}
 
-                <div className="flex flex-col gap-3">
-                    {players.map((player, index) => {
-                        const stat = player.player_stat;
-                        return (
-                            <div
-                                key={player.id}
-                                className="animate-fade-in-up"
-                                style={{ animationDelay: `${160 + index * 70}ms` }}
-                            >
-                                <RosterCard
-                                    name={player.nickname}
-                                    avatarUrl={player.avatar}
-                                    status={statusFor(stat?.steam_persona_state ?? null)}
-                                    faceit={
-                                        stat?.faceit_skill_level && stat?.faceit_elo
-                                            ? { level: stat.faceit_skill_level, elo: stat.faceit_elo }
-                                            : null
-                                    }
-                                    playtimeLabel={playtimeLabel(stat?.playtime_2weeks_minutes ?? null)}
-                                />
-                            </div>
-                        );
-                    })}
-                    {Array.from({ length: openSlots }).map((_, index) => (
-                        <div
-                            key={`open-${index}`}
-                            className="animate-fade-in-up"
-                            style={{ animationDelay: `${160 + (players.length + index) * 70}ms` }}
-                        >
-                            <EmptySlotCard />
+            <div className="flex flex-col gap-3">
+                {players.map((player, index) => {
+                    const stat = player.player_stat;
+                    return (
+                        <div key={player.id} className="animate-fade-in-up" style={{ animationDelay: `${160 + index * 70}ms` }}>
+                            <RosterCard
+                                name={player.nickname}
+                                avatarUrl={player.avatar}
+                                status={statusFor(stat?.steam_persona_state ?? null)}
+                                faceit={
+                                    stat?.faceit_skill_level && stat?.faceit_elo ? { level: stat.faceit_skill_level, elo: stat.faceit_elo } : null
+                                }
+                                playtimeLabel={playtimeLabel(stat?.playtime_2weeks_minutes ?? null)}
+                            />
                         </div>
-                    ))}
-                </div>
-            </main>
-        </div>
+                    );
+                })}
+                {Array.from({ length: openSlots }).map((_, index) => (
+                    <div key={`open-${index}`} className="animate-fade-in-up" style={{ animationDelay: `${160 + (players.length + index) * 70}ms` }}>
+                        <EmptySlotCard />
+                    </div>
+                ))}
+            </div>
+        </TeamLayout>
     );
 }

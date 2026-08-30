@@ -1,10 +1,15 @@
 /**
  * Canonical color values, derived from the actual team logo (pixel-sampled,
- * not guessed): primary orange ~#f6520d (the bull), secondary blue
- * ~#2ce3fc (the horns / "BUCA" half of the wordmark), dark navy-black
- * background ~#0a0e15. `theme.css` mirrors these as Tailwind v4 `@theme`
- * variables — if you change a value here, update theme.css to match (kept
- * hand-in-sync rather than generated, since the palette is still small).
+ * not guessed): blue ~#2ce3fc (the horns / "BUCA" half of the wordmark),
+ * dark navy-black background ~#0a0e15. The logo's orange (the bull) was
+ * dropped from the UI palette entirely — `accent` was originally that
+ * orange, but reads as too loud for frequent in-context actions, so it's
+ * now the same blue as `accentSecondary`. Both tokens are kept (rather than
+ * collapsed into one) so existing `accent`/`accent-secondary` class usages
+ * across the app didn't all need touching. `theme.css` mirrors these as
+ * Tailwind v4 `@theme` variables — if you change a value here, update
+ * theme.css to match (kept hand-in-sync rather than generated, since the
+ * palette is still small).
  */
 export const colors = {
     dark: {
@@ -16,7 +21,7 @@ export const colors = {
         input: 'hsl(220, 16%, 20%)',
         muted: 'hsl(220, 16%, 14%)',
         mutedForeground: 'hsl(220, 10%, 62%)',
-        accent: 'hsl(20, 90%, 52%)',
+        accent: 'hsl(187, 90%, 55%)',
         accentForeground: 'hsl(220, 15%, 9%)',
         accentSecondary: 'hsl(187, 90%, 55%)',
         accentSecondaryForeground: 'hsl(220, 15%, 9%)',
@@ -24,7 +29,7 @@ export const colors = {
         destructiveForeground: 'hsl(0, 0%, 98%)',
         positive: 'hsl(142, 71%, 45%)',
         positiveForeground: 'hsl(220, 15%, 9%)',
-        ring: 'hsl(20, 90%, 52%)',
+        ring: 'hsl(187, 90%, 55%)',
     },
     light: {
         background: 'hsl(210, 20%, 98%)',
@@ -35,7 +40,7 @@ export const colors = {
         input: 'hsl(220, 14%, 85%)',
         muted: 'hsl(220, 14%, 94%)',
         mutedForeground: 'hsl(220, 8%, 40%)',
-        accent: 'hsl(18, 88%, 45%)',
+        accent: 'hsl(195, 88%, 38%)',
         accentForeground: 'hsl(0, 0%, 100%)',
         accentSecondary: 'hsl(195, 88%, 38%)',
         accentSecondaryForeground: 'hsl(0, 0%, 100%)',
@@ -43,6 +48,6 @@ export const colors = {
         destructiveForeground: 'hsl(0, 0%, 98%)',
         positive: 'hsl(142, 71%, 36%)',
         positiveForeground: 'hsl(0, 0%, 100%)',
-        ring: 'hsl(18, 88%, 45%)',
+        ring: 'hsl(195, 88%, 38%)',
     },
 } as const;

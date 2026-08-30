@@ -11,3 +11,7 @@ export default meta;
 type Story = StoryObj<typeof EmptySlotCard>;
 
 export const Default: Story = {};
+
+export const CustomLabel: Story = {
+    args: { label: 'No lineups yet for this map' },
+};

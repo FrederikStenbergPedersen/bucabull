@@ -4,9 +4,12 @@
  * never drift. Mirrors packages/ui/src/tokens/colors.ts — kept hand-in-sync
  * rather than generated, since the palette is still small.
  *
- * Colors are derived from the actual team logo (pixel-sampled): primary
- * orange ~#f6520d (the bull), secondary blue ~#2ce3fc (the horns / "BUCA"
- * half of the wordmark), dark navy-black background ~#0a0e15.
+ * Colors are derived from the actual team logo (pixel-sampled): blue
+ * ~#2ce3fc (the horns / "BUCA" half of the wordmark), dark navy-black
+ * background ~#0a0e15. The logo's orange (the bull) was dropped from the
+ * UI palette — too loud for frequent in-context actions — so `accent` is
+ * now the same blue as `accent-secondary` (see colors.ts for the fuller
+ * rationale).
  */
 
 @theme inline {
@@ -46,7 +49,7 @@
     --input: hsl(220, 14%, 85%);
     --muted: hsl(220, 14%, 94%);
     --muted-foreground: hsl(220, 8%, 40%);
-    --accent: hsl(18, 88%, 45%);
+    --accent: hsl(195, 88%, 38%);
     --accent-foreground: hsl(0, 0%, 100%);
     --accent-secondary: hsl(195, 88%, 38%);
     --accent-secondary-foreground: hsl(0, 0%, 100%);
@@ -54,7 +57,7 @@
     --destructive-foreground: hsl(0, 0%, 98%);
     --positive: hsl(142, 71%, 36%);
     --positive-foreground: hsl(0, 0%, 100%);
-    --ring: hsl(18, 88%, 45%);
+    --ring: hsl(195, 88%, 38%);
 }
 
 .dark {
@@ -66,7 +69,7 @@
     --input: hsl(220, 16%, 20%);
     --muted: hsl(220, 16%, 14%);
     --muted-foreground: hsl(220, 10%, 62%);
-    --accent: hsl(20, 90%, 52%);
+    --accent: hsl(187, 90%, 55%);
     --accent-foreground: hsl(220, 15%, 9%);
     --accent-secondary: hsl(187, 90%, 55%);
     --accent-secondary-foreground: hsl(220, 15%, 9%);
@@ -74,7 +77,7 @@
     --destructive-foreground: hsl(0, 0%, 98%);
     --positive: hsl(142, 71%, 45%);
     --positive-foreground: hsl(220, 15%, 9%);
-    --ring: hsl(20, 90%, 52%);
+    --ring: hsl(187, 90%, 55%);
 }
 
 /*
@@ -150,4 +153,83 @@
     .animate-grid-pan {
         animation: none;
     }
+}
+
+/*
+ * Drawer's slide-in needs @starting-style on the <dialog> element itself
+ * (not a child div) — a <dialog> without [open] is display:none by the UA
+ * stylesheet, so a descendant only ever starts being rendered once the
+ * ANCESTOR's display flips, and @starting-style doesn't reliably pick that
+ * up for the descendant. Putting the rule on dialog[open] ties it to the
+ * exact element/attribute change @starting-style is designed to catch.
+ * Closing is JS-driven (see Drawer.tsx) since close() removes [open]
+ * instantly — [data-closing] re-forces the off-screen position while
+ * [open] is still present, so there's something for that exit transition
+ * to animate.
+ */
+dialog.drawer-panel {
+    translate: 100% 0;
+    transition: translate 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+dialog.drawer-panel[open] {
+    translate: 0 0;
+}
+
+dialog.drawer-panel[open][data-closing='true'] {
+    translate: 100% 0;
+}
+
+@starting-style {
+    dialog.drawer-panel[open] {
+        translate: 100% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    dialog.drawer-panel {
+        transition: none;
+    }
+}
+
+/*
+ * Same JS-driven-exit / @starting-style-on-[open] approach as
+ * dialog.drawer-panel above, scale+fade instead of translate — see that
+ * comment for why @starting-style has to target the <dialog> itself.
+ */
+dialog.modal-panel {
+    scale: 0.95;
+    opacity: 0;
+    transition:
+        scale 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.2s ease;
+}
+
+dialog.modal-panel[open] {
+    scale: 1;
+    opacity: 1;
+}
+
+dialog.modal-panel[open][data-closing='true'] {
+    scale: 0.95;
+    opacity: 0;
+}
+
+@starting-style {
+    dialog.modal-panel[open] {
+        scale: 0.95;
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    dialog.modal-panel {
+        transition: none;
+    }
+}
+
+/* Generic "no specific art" texture for a sidebar item — a custom/unrecognized map, not one of the curated ones with a real overview photo. */
+.sidebar-item-unidentified {
+    background-color: var(--muted);
+    background-image: repeating-linear-gradient(135deg, var(--border) 0px, var(--border) 1px, transparent 1px, transparent 8px);
 }

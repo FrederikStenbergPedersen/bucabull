@@ -12,8 +12,8 @@ export function JoinCta({ href }: JoinCtaProps) {
             <div>
                 <Text variant="subheading">Every team gets a page like this</Text>
                 <Text variant="muted" className="mt-1">
-                    Sign in with Steam to set up your own — Steam status, Faceit ranks, and a shared roster, synced
-                    automatically.
+                    Sign in with Steam to set up your own — roster tracking today, with more team tools and stats on
+                    the way.
                 </Text>
             </div>
             <SteamSignInButton href={href} className="shrink-0" />

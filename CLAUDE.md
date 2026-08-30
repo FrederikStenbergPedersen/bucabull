@@ -17,9 +17,28 @@ Steam/Faceit data (online status, rank, playtime) is polled on a schedule
 (`app/Jobs/RefreshRosterStatsJob.php`, `routes/console.php`) into
 `player_stats`, never fetched live per-request.
 
-Strats, utility, the tactics board — the original stratbook-inspired
-feature set — is intentionally not built yet. Don't add it unless asked;
-this is foundation only (auth, team model, roster page).
+Strats and the tactics board — the original stratbook-inspired feature
+set — are intentionally not built yet. Don't add them unless asked. The
+Grenades library (`app/Http/Controllers/GrenadeController.php`,
+`resources/js/pages/team/grenades/`) is the first team tool built beyond
+the roster/auth foundation: per-team lineups (setpos, side, throw button,
+stance/movement/jump, type, up to 3 screenshots) organized by map. Maps
+are a curated list in `config/maps.php` (append-only slugs — see the
+comment there) plus a free-text "Other" fallback with no overview image.
+Screenshot uploads go through the `public` disk; the production Docker
+setup bind-mounts `storage/app/public` on the `app` service only (see
+`docker-compose.prod.yml`).
+
+The roster page (`home.tsx`) is wrapped in `TeamLayout`
+(`packages/ui/src/patterns/TeamLayout.tsx`), which owns the whole page
+frame — backdrop, header, nav tabs, content area — for both the
+logged-out and logged-in views. The nav tab row only renders once there's
+more than one entry, sourced from `useTeamNav()`
+(`resources/js/hooks/use-team-nav.ts`). When a new team-facing tool is
+added: put its page under `resources/js/pages/team/`, wrap it in
+`<TeamLayout>`, and add one entry to `useTeamNav()`. Its controller stays
+a flat file in `app/Http/Controllers/` unless/until that domain grows a
+second controller (the only reason `Auth/` is a subnamespace today).
 
 ## Component library is the only door in
 

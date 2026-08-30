@@ -26,6 +26,7 @@ COPY --from=vendor /app/vendor ./vendor
 COPY . .
 COPY --from=assets /app/public/build ./public/build
 RUN composer dump-autoload --no-dev --optimize \
+ && php artisan storage:link \
  && chown -R www-data:www-data storage bootstrap/cache
 
 ENV SERVER_NAME=":8080"

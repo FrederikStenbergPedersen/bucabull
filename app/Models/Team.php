@@ -36,6 +36,14 @@ class Team extends Model
     }
 
     /**
+     * @return HasMany<Grenade, $this>
+     */
+    public function grenades(): HasMany
+    {
+        return $this->hasMany(Grenade::class);
+    }
+
+    /**
      * The deployment's configured "home team" — shown on the public page
      * to logged-out visitors. Deployment-level config, not team data.
      */

@@ -5,6 +5,16 @@ services:
     env_file: ./.env
     ports:
       - '127.0.0.1:8080:8080'
+    volumes:
+      # Uploaded screenshots (grenade library). Bind mount, not a named
+      # volume, so it survives redeploys and can be backed up the same way
+      # as scripts/backup-postgres.sh does for the database (plain host
+      # path, rsync-able) — only `app` needs this, `queue`/`scheduler`
+      # never touch uploaded files. The host directory must be writable by
+      # whatever user this container runs as (verify with `docker compose
+      # exec app id` — a bind mount does NOT inherit the image's build-time
+      # `chown www-data storage`).
+      - /var/www/bucabull/storage/app/public:/app/storage/app/public
     depends_on:
       - postgres
 

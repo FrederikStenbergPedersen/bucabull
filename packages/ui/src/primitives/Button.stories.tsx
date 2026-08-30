@@ -22,6 +22,10 @@ export const Ghost: Story = {
     args: { children: 'Cancel', variant: 'ghost' },
 };
 
+export const Destructive: Story = {
+    args: { children: 'Delete', variant: 'destructive' },
+};
+
 export const Disabled: Story = {
     args: { children: 'Processing…', disabled: true },
 };
