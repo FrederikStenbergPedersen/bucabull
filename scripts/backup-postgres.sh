@@ -22,4 +22,5 @@ find "$BACKUP_DIR" -name '*.sql.gz' -mtime +"$RETENTION_DAYS" -delete
 
 if [ -n "${BACKUP_RCLONE_REMOTE:-}" ]; then
   rclone copy "$BACKUP_DIR/$STAMP.sql.gz" "$BACKUP_RCLONE_REMOTE"
+  rclone delete --min-age "${RETENTION_DAYS}d" "$BACKUP_RCLONE_REMOTE"
 fi
