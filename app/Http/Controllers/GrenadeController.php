@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Grenade;
 use App\Models\GrenadeScreenshot;
+use App\Support\MapOverview;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -52,13 +53,13 @@ class GrenadeController extends Controller
         ])->values();
 
         $customMaps = $counts->reject(fn ($count, $map) => in_array($map, $curatedSlugs, true))
-            ->map(fn ($count, $map) => ['slug' => $map, 'name' => $map, 'overview' => $this->guessOverview($map), 'count' => $count])
+            ->map(fn ($count, $map) => ['slug' => $map, 'name' => $map, 'overview' => MapOverview::guess($map), 'count' => $count])
             ->values();
 
         $selectedMapKey = $request->query('map') ?: ($maps->first()['slug'] ?? null);
 
         $selectedMap = collect(config('maps'))->firstWhere('slug', $selectedMapKey)
-            ?? ($selectedMapKey ? ['slug' => $selectedMapKey, 'name' => $selectedMapKey, 'overview' => $this->guessOverview($selectedMapKey)] : null);
+            ?? ($selectedMapKey ? ['slug' => $selectedMapKey, 'name' => $selectedMapKey, 'overview' => MapOverview::guess($selectedMapKey)] : null);
 
         $grenades = $selectedMapKey
             ? Grenade::where('team_id', $teamId)->where('map', $selectedMapKey)->with('screenshots')->latest()->get()
@@ -123,34 +124,6 @@ class GrenadeController extends Controller
         $screenshot->delete();
 
         return back();
-    }
-
-    /**
-     * A custom map name is often just a curated map typed instead of
-     * selected (e.g. "de_dust2" or "Dust 2" instead of picking "Dust II"
-     * from the dropdown) — recognize that and reuse the curated map's
-     * photo instead of the generic "unidentified" pattern. Exact match
-     * only (after stripping a de_/cs_/dz_ prefix and non-alphanumerics),
-     * not substring matching, to avoid false positives on short slugs.
-     */
-    private function guessOverview(string $customMapName): ?string
-    {
-        $normalized = $this->normalizeMapName($customMapName);
-
-        foreach (config('maps') as $map) {
-            if ($normalized === $this->normalizeMapName($map['slug']) || $normalized === $this->normalizeMapName($map['name'])) {
-                return $map['overview'];
-            }
-        }
-
-        return null;
-    }
-
-    private function normalizeMapName(string $name): string
-    {
-        $name = preg_replace('/^(de|cs|dz)[_\s]+/i', '', trim($name));
-
-        return preg_replace('/[^a-z0-9]/', '', strtolower($name));
     }
 
     private function validateGrenade(Request $request, int $existingScreenshotCount): array

@@ -12,6 +12,7 @@
 return [
     ['slug' => 'ancient', 'name' => 'Ancient', 'overview' => '/maps/ancient.webp'],
     ['slug' => 'anubis', 'name' => 'Anubis', 'overview' => '/maps/anubis.webp'],
+    ['slug' => 'cache', 'name' => 'Cache', 'overview' => '/maps/cache.webp'],
     ['slug' => 'dust2', 'name' => 'Dust II', 'overview' => '/maps/dust2.webp'],
     ['slug' => 'inferno', 'name' => 'Inferno', 'overview' => '/maps/inferno.webp'],
     ['slug' => 'mirage', 'name' => 'Mirage', 'overview' => '/maps/mirage.webp'],

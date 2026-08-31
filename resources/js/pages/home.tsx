@@ -14,6 +14,9 @@ interface PlayerStat {
     faceit_skill_level: number | null;
     faceit_elo: number | null;
     faceit_region: string | null;
+    faceit_lifetime_matches: number | null;
+    faceit_lifetime_win_rate: number | null;
+    faceit_lifetime_avg_kd: number | null;
 }
 
 interface Player {
@@ -54,6 +57,18 @@ function statusFor(state: number | null) {
 function playtimeLabel(minutes: number | null) {
     if (minutes === null) return null;
     return `${(minutes / 60).toFixed(1)}h · last 2 weeks`;
+}
+
+// FACEIT's own lifetime aggregate for the player, not a season slice — the
+// Data API has no season concept for regular matchmaking, so there's no
+// boundary to compute a season figure from (see RefreshRosterStatsJob).
+function lifetimeStatsLabel(stat: PlayerStat | null) {
+    if (!stat?.faceit_lifetime_matches) return null;
+    const parts: string[] = [];
+    if (stat.faceit_lifetime_win_rate !== null) parts.push(`${stat.faceit_lifetime_win_rate}% WR`);
+    parts.push(`${stat.faceit_lifetime_matches} matches`);
+    if (stat.faceit_lifetime_avg_kd !== null) parts.push(`${stat.faceit_lifetime_avg_kd.toFixed(2)} avg K/D`);
+    return parts.join(' · ');
 }
 
 function InviteCode({ code }: { code: string }) {
@@ -126,6 +141,9 @@ export default function Home({ team, isOwnTeam }: HomeProps) {
                                     stat?.faceit_skill_level && stat?.faceit_elo ? { level: stat.faceit_skill_level, elo: stat.faceit_elo } : null
                                 }
                                 playtimeLabel={playtimeLabel(stat?.playtime_2weeks_minutes ?? null)}
+                                lifetimeStatsLabel={lifetimeStatsLabel(stat ?? null)}
+                                href={auth?.user ? route('team.players.show', player.id) : undefined}
+                                linkAs={Link}
                             />
                         </div>
                     );

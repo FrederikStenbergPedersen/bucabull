@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\GrenadeController;
+use App\Http\Controllers\PlayerMatchHistoryController;
 use App\Http\Controllers\TeamController;
+use App\Http\Middleware\EnsureTeammate;
 use App\Http\Middleware\EnsureUserHasTeam;
 use App\Models\Team;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +40,10 @@ Route::middleware(['auth', EnsureUserHasTeam::class])->prefix('team')->name('tea
     Route::put('grenades/{grenade}', [GrenadeController::class, 'update'])->name('grenades.update');
     Route::delete('grenades/{grenade}', [GrenadeController::class, 'destroy'])->name('grenades.destroy');
     Route::delete('grenades/{grenade}/screenshots/{screenshot}', [GrenadeController::class, 'destroyScreenshot'])->name('grenades.screenshots.destroy');
+
+    Route::middleware(EnsureTeammate::class)->group(function () {
+        Route::get('players/{player}', [PlayerMatchHistoryController::class, 'show'])->name('players.show');
+    });
 });
 
 require __DIR__.'/auth.php';
