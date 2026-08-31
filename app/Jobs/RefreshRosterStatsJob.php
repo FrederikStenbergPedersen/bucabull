@@ -155,6 +155,10 @@ class RefreshRosterStatsJob implements ShouldQueue
     {
         $key = config('services.faceit.key');
 
+        if (! $key) {
+            return [];
+        }
+
         $response = Http::withToken($key)->get("https://open.faceit.com/data/v4/players/{$faceitPlayerId}/stats/cs2");
 
         if ($response->failed()) {
@@ -261,6 +265,10 @@ class RefreshRosterStatsJob implements ShouldQueue
     private function fetchFaceitMatchPlayerStats(string $matchId, string $faceitPlayerId): array
     {
         $key = config('services.faceit.key');
+
+        if (! $key) {
+            return ['map' => 'Unknown'];
+        }
 
         $response = Http::withToken($key)->get("https://open.faceit.com/data/v4/matches/{$matchId}/stats");
 

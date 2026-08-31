@@ -21,9 +21,10 @@ class EnsureTeammate
     public function handle(Request $request, Closure $next): Response
     {
         $player = $request->route('player');
+        $viewer = $request->user();
 
         abort_unless(
-            $player instanceof User && $player->team_id !== null && $player->team_id === $request->user()->team_id,
+            $player instanceof User && $viewer && $player->team_id !== null && $player->team_id === $viewer->team_id,
             403,
         );
 
