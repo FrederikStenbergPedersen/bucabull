@@ -17,11 +17,15 @@ export { SegmentedControl } from './primitives/SegmentedControl';
 export type { SegmentedControlProps, SegmentedControlOption } from './primitives/SegmentedControl';
 export { Disclosure } from './primitives/Disclosure';
 export type { DisclosureProps } from './primitives/Disclosure';
+export { LinkableCard } from './primitives/LinkableCard';
+export type { LinkableCardProps } from './primitives/LinkableCard';
 
 export { AuthLayout } from './patterns/AuthLayout';
 export type { AuthLayoutProps } from './patterns/AuthLayout';
 export { RosterCard } from './patterns/RosterCard';
 export type { RosterCardProps } from './patterns/RosterCard';
+export { MatchCard } from './patterns/MatchCard';
+export type { MatchCardProps } from './patterns/MatchCard';
 export { EmptySlotCard } from './patterns/EmptySlotCard';
 export type { EmptySlotCardProps } from './patterns/EmptySlotCard';
 export { AmbientBackdrop } from './patterns/AmbientBackdrop';
