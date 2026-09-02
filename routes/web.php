@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DemoController;
 use App\Http\Controllers\GrenadeController;
 use App\Http\Controllers\PlayerMatchHistoryController;
 use App\Http\Controllers\TeamController;
@@ -40,6 +41,10 @@ Route::middleware(['auth', EnsureUserHasTeam::class])->prefix('team')->name('tea
     Route::put('grenades/{grenade}', [GrenadeController::class, 'update'])->name('grenades.update');
     Route::delete('grenades/{grenade}', [GrenadeController::class, 'destroy'])->name('grenades.destroy');
     Route::delete('grenades/{grenade}/screenshots/{screenshot}', [GrenadeController::class, 'destroyScreenshot'])->name('grenades.screenshots.destroy');
+
+    Route::post('matches/{match}/demo', [DemoController::class, 'store'])->name('demos.store');
+    Route::get('demos/{demo}', [DemoController::class, 'show'])->name('demos.show');
+    Route::get('demos/{demo}/data', [DemoController::class, 'data'])->name('demos.data');
 
     Route::middleware(EnsureTeammate::class)->group(function () {
         Route::get('players/{player}', [PlayerMatchHistoryController::class, 'show'])->name('players.show');

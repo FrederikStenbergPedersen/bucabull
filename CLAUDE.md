@@ -96,3 +96,21 @@ the revenue-bearing code, not the license terms.
   `resources/css/app.css`; if that directive ever gets removed, classes used
   only inside the library get silently purged with no build error.
 - Local Postgres: `docker compose up -d` (root `docker-compose.yml`).
+- `composer run dev`'s dev server deliberately does **not** run `php artisan
+  serve` — it invokes the same underlying router script directly
+  (`vendor/laravel/framework/.../resources/server.php`) with `-d` flags
+  raising `upload_max_filesize`/`post_max_size`/`memory_limit`, run from
+  `public/` as `artisan serve` itself does internally. `-d` flags given to
+  `php artisan serve` are silently ignored — it shells out to a hardcoded
+  `php -S ... server.php` subprocess (see `ServeCommand::serverCommand()`)
+  that doesn't inherit them, and neither does a `.user.ini` (not honored by
+  PHP's built-in CLI server). Even with correct limits, PHP's built-in
+  server is still inherently slow — closer to 1MB/s than any real
+  network/disk speed, and worse than linear as the body grows — at
+  buffering a large POST body (this is a `php -S` implementation
+  limitation, not something any of the above fixes); a multi-hundred-MB
+  `.dem` upload (see the demo viewer feature) will take several minutes
+  locally even though production (FrankenPHP) doesn't have this problem.
+  For a closer-to-production timing check, `docker compose --profile full
+  up -d --build` runs the real image locally instead (see
+  `docker-compose.yml`'s comment on that service).

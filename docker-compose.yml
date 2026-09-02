@@ -11,5 +11,40 @@ services:
         volumes:
             - postgres-data:/var/lib/postgresql/data
 
+    # The real production image (same Dockerfile/FrankenPHP as
+    # docker-compose.prod.yml), built from your local checkout — NOT
+    # started by a plain `docker compose up`, opt in explicitly:
+    #
+    #   docker compose --profile full up -d --build
+    #
+    # This exists for testing things `composer run dev`'s built-in PHP
+    # dev server can't represent accurately, chiefly large file uploads
+    # (the 2D demo viewer's .dem upload): PHP's built-in server buffers
+    # the whole request body inefficiently regardless of php.ini limits,
+    # so a multi-hundred-MB upload that's fast against a real server can
+    # take many minutes (or even exhaust memory) against it — see the
+    # note in CLAUDE.md. --build isn't optional in practice: unlike
+    # `composer run dev`/`npm run dev`, this has no hot reload, it's a
+    # full Dockerfile build (Node + Composer) that only picks up code
+    # changes when rebuilt.
+    app:
+        profiles: ['full']
+        build: .
+        restart: unless-stopped
+        env_file: ./.env
+        environment:
+            # Override just what has to differ from your native .env for
+            # container networking — everything else (APP_KEY, FACEIT_API_KEY,
+            # STEAM_CLIENT_SECRET, ...) comes from that same file.
+            DB_HOST: postgres
+            DB_PORT: 5432
+        ports:
+            - '127.0.0.1:8080:8080'
+        volumes:
+            - ./storage/app/public:/app/storage/app/public
+            - ./storage/app/private:/app/storage/app/private
+        depends_on:
+            - postgres
+
 volumes:
     postgres-data:

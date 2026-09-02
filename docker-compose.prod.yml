@@ -15,6 +15,12 @@ services:
       # exec app id` — a bind mount does NOT inherit the image's build-time
       # `chown www-data storage`).
       - /var/www/bucabull/storage/app/public:/app/storage/app/public
+      # Uploaded demo files + their parsed JSON (private disk — never
+      # served directly, only through DemoController's team-scoped
+      # actions). Unlike the public mount above, `queue-demos` needs this
+      # too: uploads land here via `app`, but get read/written by the
+      # queue worker that actually parses them.
+      - /var/www/bucabull/storage/app/private:/app/storage/app/private
     depends_on:
       - postgres
 
@@ -23,6 +29,21 @@ services:
     command: php artisan queue:work --tries=3
     restart: unless-stopped
     env_file: ./.env
+    depends_on:
+      - postgres
+
+  # Dedicated queue/worker for demo parsing, kept off the default `queue`
+  # service so a long-running parse (the real parser lands in a later
+  # slice; --timeout is already sized for it) never blocks
+  # RefreshRosterStatsJob's 5-minute schedule. --tries=1: a failed parse
+  # needs investigation, not a blind retry.
+  queue-demos:
+    image: ghcr.io/frederikstenbergpedersen/bucabull:latest
+    command: php artisan queue:work --queue=demos --tries=1 --timeout=1800
+    restart: unless-stopped
+    env_file: ./.env
+    volumes:
+      - /var/www/bucabull/storage/app/private:/app/storage/app/private
     depends_on:
       - postgres
 

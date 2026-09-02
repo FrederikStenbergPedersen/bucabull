@@ -1,8 +1,10 @@
 import { Badge, type BadgeProps, MatchCard, RosterCard, TeamLayout, Text } from '@bucabull/ui';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 
+import { DemoUpload } from '@/components/demo-upload';
 import { useTeamNav } from '@/hooks/use-team-nav';
 import { type SharedData } from '@/types';
+import { type DemoRecord } from '@/types/demo';
 
 interface PlayerStat {
     steam_persona_state: number | null;
@@ -26,6 +28,7 @@ interface Player {
 
 interface FaceitMatch {
     id: number;
+    faceit_match_id: string;
     map: string;
     map_overview: string | null;
     result: boolean;
@@ -35,6 +38,7 @@ interface FaceitMatch {
     assists: number | null;
     kd_ratio: number | null;
     played_at: string | null;
+    demo: DemoRecord | null;
 }
 
 interface PlayerMatchHistoryProps {
@@ -131,6 +135,7 @@ export default function PlayerMatchHistory({ player, matches }: PlayerMatchHisto
                             score={match.score}
                             kdLabel={kdLabel(match)}
                             playedAtLabel={relativeDate(match.played_at)}
+                            footer={<DemoUpload matchId={match.id} demo={match.demo} />}
                         />
                     </div>
                 ))}

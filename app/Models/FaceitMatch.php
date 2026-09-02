@@ -41,4 +41,18 @@ class FaceitMatch extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * The one Demo shared by every teammate's own row for this same real
+     * match (see the demos migration for why this joins on the plain
+     * faceit_match_id string rather than a foreign key) — this is what
+     * lets a second teammate's match card resolve straight to the first
+     * teammate's upload instead of prompting again.
+     *
+     * @return BelongsTo<Demo, $this>
+     */
+    public function demo(): BelongsTo
+    {
+        return $this->belongsTo(Demo::class, 'faceit_match_id', 'faceit_match_id');
+    }
 }
