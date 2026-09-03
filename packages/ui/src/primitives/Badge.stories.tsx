@@ -22,6 +22,10 @@ export const Info: Story = {
     args: { children: 'Faceit 9 · 2450', tone: 'info' },
 };
 
+export const Warning: Story = {
+    args: { children: 'T', tone: 'warning' },
+};
+
 export const Neutral: Story = {
     args: { children: 'Faceit 8 · 1850', tone: 'neutral' },
 };

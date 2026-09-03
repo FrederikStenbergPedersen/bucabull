@@ -208,14 +208,14 @@ export default function GrenadesIndex({ maps, customMaps, selectedMap, grenades 
     }
 
     const mapSwitcher = (
-        <div className="flex flex-col gap-1 border-t border-border pt-4">
+        <div className="border-border flex flex-col gap-1 border-t pt-4">
             {maps.map((map) => (
                 <SidebarNavItem
                     key={map.slug}
                     href={`${route('team.grenades.index')}?${new URLSearchParams({ map: map.slug })}`}
                     active={selectedMap?.slug === map.slug}
                     backgroundImage={map.overview}
-                    trailing={<span className={map.overview ? undefined : 'text-xs text-muted-foreground'}>{map.count}</span>}
+                    trailing={<span className={map.overview ? undefined : 'text-muted-foreground text-xs'}>{map.count}</span>}
                     onClick={(e) => switchMap(e, map.slug)}
                 >
                     {map.name}
@@ -228,7 +228,7 @@ export default function GrenadesIndex({ maps, customMaps, selectedMap, grenades 
                     active={selectedMap?.slug === map.slug}
                     backgroundImage={map.overview}
                     unidentified={!map.overview}
-                    trailing={<span className={map.overview ? undefined : 'text-xs text-muted-foreground'}>{map.count}</span>}
+                    trailing={<span className={map.overview ? undefined : 'text-muted-foreground text-xs'}>{map.count}</span>}
                     onClick={(e) => switchMap(e, map.slug)}
                 >
                     {map.name}
@@ -251,7 +251,7 @@ export default function GrenadesIndex({ maps, customMaps, selectedMap, grenades 
                 <button
                     type="button"
                     onClick={() => setAddingMap(true)}
-                    className="cursor-pointer rounded-md px-3 py-2 text-left text-sm text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+                    className="text-muted-foreground hover:bg-muted/60 hover:text-foreground cursor-pointer rounded-md px-3 py-2 text-left text-sm transition-colors"
                 >
                     + Add map
                 </button>
@@ -324,11 +324,11 @@ export default function GrenadesIndex({ maps, customMaps, selectedMap, grenades 
                                                 <Text variant="body" className="truncate text-sm font-medium">
                                                     {grenade.name}
                                                 </Text>
-                                                <Badge tone={grenade.side === 'CT' ? 'info' : 'muted'}>{grenade.side}</Badge>
+                                                <Badge tone={grenade.side === 'CT' ? 'info' : 'warning'}>{grenade.side}</Badge>
                                             </div>
                                             <VideoThumbnail videoUrl={grenade.video_link} posterUrl={grenade.screenshots[0]?.url} />
                                             <div className="flex items-center justify-between gap-2">
-                                                <div className="flex items-center gap-1.5 text-muted-foreground">
+                                                <div className="text-muted-foreground flex items-center gap-1.5">
                                                     {[
                                                         THROW_BUTTON_META[grenade.throw_button],
                                                         STANCE_META[grenade.stance],

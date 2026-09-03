@@ -28,6 +28,8 @@ import { router, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
 
+import { SIDE_DOT } from '@/lib/side';
+
 interface MapOption {
     slug: string;
     name: string;
@@ -63,13 +65,10 @@ export interface GrenadeFormProps {
     onCancel: () => void;
 }
 
-// Same CT=info(cyan)/T=muted color mapping already shown on each lineup
-// card's Side badge — kept in one place (exported for the index page's
-// side filter too) so they never drift apart.
-export const SIDE_DOT: Record<string, string> = {
-    CT: 'bg-accent-secondary',
-    T: 'bg-muted-foreground',
-};
+// Re-exported for backward compat — resources/js/pages/team/grenades/index.tsx
+// still imports SIDE_DOT from here; the source of truth is now @/lib/side
+// since Strategies needs it too.
+export { SIDE_DOT };
 
 export function GrenadeForm({ maps, grenade, prefillMap, onSuccess, onCancel }: GrenadeFormProps) {
     const curatedSlugs = maps.map((m) => m.slug);
@@ -167,23 +166,13 @@ export function GrenadeForm({ maps, grenade, prefillMap, onSuccess, onCancel }: 
 
             <div className="grid gap-2">
                 <Label htmlFor="setpos">Setpos command</Label>
-                <Input
-                    id="setpos"
-                    className="font-mono"
-                    value={form.data.setpos}
-                    onChange={(e) => form.setData('setpos', e.target.value)}
-                />
+                <Input id="setpos" className="font-mono" value={form.data.setpos} onChange={(e) => form.setData('setpos', e.target.value)} />
                 <FieldError message={form.errors.setpos} />
             </div>
 
             <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
-                <Textarea
-                    id="description"
-                    rows={2}
-                    value={form.data.description}
-                    onChange={(e) => form.setData('description', e.target.value)}
-                />
+                <Textarea id="description" rows={2} value={form.data.description} onChange={(e) => form.setData('description', e.target.value)} />
                 <FieldError message={form.errors.description} />
             </div>
 
@@ -220,9 +209,9 @@ export function GrenadeForm({ maps, grenade, prefillMap, onSuccess, onCancel }: 
                         value={form.data.throw_button}
                         onChange={(v) => form.setData('throw_button', v)}
                         options={[
-                            { value: 'left', label: 'Left click', icon: <ThrowLeftClickIcon className="size-5" /> },
-                            { value: 'right', label: 'Right click', icon: <ThrowRightClickIcon className="size-5" /> },
-                            { value: 'both', label: 'Both', icon: <ThrowBothClickIcon className="size-5" /> },
+                            { value: 'left', label: 'Left click', icon: <ThrowLeftClickIcon className="size-7" /> },
+                            { value: 'right', label: 'Right click', icon: <ThrowRightClickIcon className="size-7" /> },
+                            { value: 'both', label: 'Both', icon: <ThrowBothClickIcon className="size-7" /> },
                         ]}
                     />
                 </div>
@@ -232,8 +221,8 @@ export function GrenadeForm({ maps, grenade, prefillMap, onSuccess, onCancel }: 
                         value={form.data.stance}
                         onChange={(v) => form.setData('stance', v)}
                         options={[
-                            { value: 'standing', label: 'Standing', icon: <StanceStandingIcon className="size-5" /> },
-                            { value: 'crouching', label: 'Crouching', icon: <StanceCrouchingIcon className="size-5" /> },
+                            { value: 'standing', label: 'Standing', icon: <StanceStandingIcon className="size-7" /> },
+                            { value: 'crouching', label: 'Crouching', icon: <StanceCrouchingIcon className="size-7" /> },
                         ]}
                     />
                 </div>
@@ -246,9 +235,9 @@ export function GrenadeForm({ maps, grenade, prefillMap, onSuccess, onCancel }: 
                         value={form.data.movement}
                         onChange={(v) => form.setData('movement', v)}
                         options={[
-                            { value: 'standing', label: 'Standing', icon: <MovementStandingIcon className="size-5" /> },
-                            { value: 'walking', label: 'Walking', icon: <MovementWalkingIcon className="size-5" /> },
-                            { value: 'running', label: 'Running', icon: <MovementRunningIcon className="size-5" /> },
+                            { value: 'standing', label: 'Standing', icon: <MovementStandingIcon className="size-7" /> },
+                            { value: 'walking', label: 'Walking', icon: <MovementWalkingIcon className="size-7" /> },
+                            { value: 'running', label: 'Running', icon: <MovementRunningIcon className="size-7" /> },
                         ]}
                     />
                 </div>
@@ -258,8 +247,8 @@ export function GrenadeForm({ maps, grenade, prefillMap, onSuccess, onCancel }: 
                         value={form.data.jump}
                         onChange={(v) => form.setData('jump', v)}
                         options={[
-                            { value: 'standing', label: 'Standing', icon: <JumpStandingIcon className="size-5" /> },
-                            { value: 'jumping', label: 'Jumping', icon: <JumpJumpingIcon className="size-5" /> },
+                            { value: 'standing', label: 'Standing', icon: <JumpStandingIcon className="size-7" /> },
+                            { value: 'jumping', label: 'Jumping', icon: <JumpJumpingIcon className="size-7" /> },
                         ]}
                     />
                 </div>

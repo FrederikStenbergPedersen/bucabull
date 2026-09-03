@@ -2,14 +2,22 @@
  * Canonical color values, derived from the actual team logo (pixel-sampled,
  * not guessed): blue ~#2ce3fc (the horns / "BUCA" half of the wordmark),
  * dark navy-black background ~#0a0e15. The logo's orange (the bull) was
- * dropped from the UI palette entirely — `accent` was originally that
+ * dropped as a general-purpose UI accent — `accent` was originally that
  * orange, but reads as too loud for frequent in-context actions, so it's
  * now the same blue as `accentSecondary`. Both tokens are kept (rather than
  * collapsed into one) so existing `accent`/`accent-secondary` class usages
- * across the app didn't all need touching. `theme.css` mirrors these as
- * Tailwind v4 `@theme` variables — if you change a value here, update
- * theme.css to match (kept hand-in-sync rather than generated, since the
- * palette is still small).
+ * across the app didn't all need touching.
+ *
+ * `warning` brings a version of that orange back, but scoped to one
+ * specific, infrequent use: the CS T/CT side marker, where T needs its own
+ * lively color the way CT has `accent-secondary` blue — gray read as
+ * "unset" rather than "the other team". This isn't the loud bull-orange;
+ * it's tuned like the other semantic tones (destructive/positive) for a
+ * small dot or badge, not a button someone stares at all day.
+ *
+ * `theme.css` mirrors these as Tailwind v4 `@theme` variables — if you
+ * change a value here, update theme.css to match (kept hand-in-sync rather
+ * than generated, since the palette is still small).
  */
 export const colors = {
     dark: {
@@ -29,6 +37,8 @@ export const colors = {
         destructiveForeground: 'hsl(0, 0%, 98%)',
         positive: 'hsl(142, 71%, 45%)',
         positiveForeground: 'hsl(220, 15%, 9%)',
+        warning: 'hsl(32, 90%, 55%)',
+        warningForeground: 'hsl(220, 15%, 9%)',
         ring: 'hsl(187, 90%, 55%)',
     },
     light: {
@@ -48,6 +58,8 @@ export const colors = {
         destructiveForeground: 'hsl(0, 0%, 98%)',
         positive: 'hsl(142, 71%, 36%)',
         positiveForeground: 'hsl(0, 0%, 100%)',
+        warning: 'hsl(24, 85%, 42%)',
+        warningForeground: 'hsl(0, 0%, 100%)',
         ring: 'hsl(195, 88%, 38%)',
     },
 } as const;

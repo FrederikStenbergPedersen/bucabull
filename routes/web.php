@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GrenadeController;
+use App\Http\Controllers\StrategyController;
 use App\Http\Controllers\TeamController;
 use App\Http\Middleware\EnsureUserHasTeam;
 use App\Models\Team;
@@ -38,6 +39,11 @@ Route::middleware(['auth', EnsureUserHasTeam::class])->prefix('team')->name('tea
     Route::put('grenades/{grenade}', [GrenadeController::class, 'update'])->name('grenades.update');
     Route::delete('grenades/{grenade}', [GrenadeController::class, 'destroy'])->name('grenades.destroy');
     Route::delete('grenades/{grenade}/screenshots/{screenshot}', [GrenadeController::class, 'destroyScreenshot'])->name('grenades.screenshots.destroy');
+
+    Route::get('strategies', [StrategyController::class, 'index'])->name('strategies.index');
+    Route::post('strategies', [StrategyController::class, 'store'])->name('strategies.store');
+    Route::put('strategies/{strategy}', [StrategyController::class, 'update'])->name('strategies.update');
+    Route::delete('strategies/{strategy}', [StrategyController::class, 'destroy'])->name('strategies.destroy');
 });
 
 require __DIR__.'/auth.php';

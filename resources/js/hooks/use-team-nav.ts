@@ -7,5 +7,6 @@ export function useTeamNav(): TeamNavItem[] {
         // TeamController and tests reference it directly.
         { label: 'Roster', href: route('home'), active: route().current('home') },
         { label: 'Utility', href: route('team.grenades.index'), active: route().current('team.grenades.*') },
+        { label: 'Strategies', href: route('team.strategies.index'), active: route().current('team.strategies.*') },
     ];
 }

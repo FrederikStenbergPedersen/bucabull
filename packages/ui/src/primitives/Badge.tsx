@@ -3,13 +3,14 @@ import { HTMLAttributes } from 'react';
 import { cn } from '../lib/cn';
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-    tone?: 'positive' | 'negative' | 'info' | 'neutral' | 'muted';
+    tone?: 'positive' | 'negative' | 'info' | 'warning' | 'neutral' | 'muted';
 }
 
 const toneClasses: Record<NonNullable<BadgeProps['tone']>, string> = {
     positive: 'bg-gradient-to-b from-positive/20 to-positive/10 text-positive',
     negative: 'bg-gradient-to-b from-destructive/20 to-destructive/10 text-destructive',
     info: 'bg-gradient-to-b from-accent-secondary/20 to-accent-secondary/10 text-accent-secondary',
+    warning: 'bg-gradient-to-b from-warning/20 to-warning/10 text-warning',
     neutral: 'bg-muted text-foreground',
     muted: 'bg-transparent text-muted-foreground border border-border',
 };
@@ -18,6 +19,7 @@ const dotClasses: Record<NonNullable<BadgeProps['tone']>, string> = {
     positive: 'bg-positive animate-pulse-soft',
     negative: 'bg-destructive',
     info: 'bg-accent-secondary',
+    warning: 'bg-warning',
     neutral: 'bg-foreground',
     muted: 'bg-muted-foreground',
 };

@@ -2,6 +2,7 @@ import { PlayCircle } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 import { cn } from '../lib/cn';
+import { youtubeId, youtubePreviewEmbedUrl } from '../lib/youtube';
 
 export interface VideoThumbnailProps {
     videoUrl?: string | null;
@@ -11,34 +12,6 @@ export interface VideoThumbnailProps {
 }
 
 const HOVER_DELAY_MS = 400;
-
-// No API key needed — YouTube serves these thumbnails publicly for any
-// video that exists. Other hosts just don't get a poster/preview.
-function youtubeId(url: string): string | null {
-    const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([\w-]{11})/);
-    return match?.[1] ?? null;
-}
-
-// controls=0 alone still leaves related-video suggestions, annotations, and
-// keyboard shortcuts active — these strip the rest of YouTube's chrome for
-// a clean preview-only embed.
-function previewEmbedUrl(id: string): string {
-    const params = new URLSearchParams({
-        autoplay: '1',
-        mute: '1',
-        controls: '0',
-        loop: '1',
-        playlist: id,
-        modestbranding: '1',
-        playsinline: '1',
-        rel: '0',
-        iv_load_policy: '3',
-        disablekb: '1',
-        fs: '0',
-        cc_load_policy: '0',
-    });
-    return `https://www.youtube.com/embed/${id}?${params}`;
-}
 
 /**
  * A clickable video thumbnail. After a short hover delay (only for YouTube
@@ -66,7 +39,7 @@ export function VideoThumbnail({ videoUrl, posterUrl, className }: VideoThumbnai
     const media = poster ? (
         <img src={poster} alt="" className="aspect-video w-full rounded-md object-cover" />
     ) : (
-        <div className="aspect-video w-full rounded-md bg-muted" />
+        <div className="bg-muted aspect-video w-full rounded-md" />
     );
 
     if (!videoUrl) return media;
@@ -97,11 +70,11 @@ export function VideoThumbnail({ videoUrl, posterUrl, className }: VideoThumbnai
             </div>
 
             {hovering && embedId && (
-                <div className="absolute top-1/2 left-1/2 z-20 w-[30rem] max-w-[85vw] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-lg border border-border bg-black shadow-2xl">
+                <div className="border-border absolute top-1/2 left-1/2 z-20 w-[30rem] max-w-[85vw] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-lg border bg-black shadow-2xl">
                     <div className="relative aspect-video w-full">
                         {poster && <img src={poster} alt="" className="absolute inset-0 size-full object-cover" />}
                         <iframe
-                            src={previewEmbedUrl(embedId)}
+                            src={youtubePreviewEmbedUrl(embedId)}
                             onLoad={() => setPreviewReady(true)}
                             className={cn(
                                 'pointer-events-none absolute inset-0 size-full transition-opacity duration-300',

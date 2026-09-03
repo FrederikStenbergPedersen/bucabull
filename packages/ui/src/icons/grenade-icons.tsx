@@ -174,16 +174,25 @@ export function JumpStandingIcon(props: IconProps) {
     );
 }
 
+// Every earlier attempt kept the front-facing Stance-Standing skeleton
+// and only varied the legs (spread, tucked, dashed ground line, chevrons)
+// — none of it read as "jumping" on its own merit, only as "not standing."
+// This breaks from that entirely and adopts MovementRunning's leaning,
+// side-on skeleton instead, going further: both arms bent into a pumping
+// swing (not Running's straight splay) and both legs bent and tucked
+// clear of the ground (not Running's one-planted-one-trailing stride) —
+// every limb bent at once is what a runner's straight trailing leg
+// doesn't give you, and what actually reads as "airborne, mid-leap" at a
+// glance. No ground line or motion marks needed; the pose alone carries it.
 export function JumpJumpingIcon(props: IconProps) {
     return (
         <svg {...base} {...props}>
-            <line x1="4" y1="21" x2="20" y2="21" />
-            <circle cx="12" cy="4" r="2.2" fill="currentColor" stroke="none" />
-            <line x1="12" y1="6.2" x2="12" y2="14" />
-            <line x1="12" y1="8" x2="8.8" y2="12.5" />
-            <line x1="12" y1="8" x2="15.2" y2="12.5" />
-            <path d="M12 14 L9 13 L9.5 16.5" fill="none" />
-            <path d="M12 14 L15 13 L14.5 16.5" fill="none" />
+            <circle cx="13.6" cy="3.4" r="2.2" fill="currentColor" stroke="none" />
+            <line x1="13.4" y1="5.6" x2="11" y2="13" />
+            <path d="M12.2 7.3 L9 6.3 L7.3 8.5" fill="none" />
+            <path d="M12.2 7.3 L15.3 8.2 L16.8 6.5" fill="none" />
+            <path d="M11 13 L7 13.5 L7.8 17.5" fill="none" />
+            <path d="M11 13 L14.5 15 L13 18.5" fill="none" />
         </svg>
     );
 }
