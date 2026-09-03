@@ -19,6 +19,10 @@ export { Disclosure } from './primitives/Disclosure';
 export type { DisclosureProps } from './primitives/Disclosure';
 export { LinkableCard } from './primitives/LinkableCard';
 export type { LinkableCardProps } from './primitives/LinkableCard';
+export { ProgressBar } from './primitives/ProgressBar';
+export type { ProgressBarProps } from './primitives/ProgressBar';
+export { RangeSlider } from './primitives/RangeSlider';
+export type { RangeSliderProps } from './primitives/RangeSlider';
 
 export { AuthLayout } from './patterns/AuthLayout';
 export type { AuthLayoutProps } from './patterns/AuthLayout';
@@ -51,6 +55,37 @@ export { ScreenshotUpload } from './patterns/ScreenshotUpload';
 export type { ScreenshotUploadProps } from './patterns/ScreenshotUpload';
 export { VideoThumbnail } from './patterns/VideoThumbnail';
 export type { VideoThumbnailProps } from './patterns/VideoThumbnail';
+
+export { DemoStatusAction } from './patterns/DemoStatusAction';
+export type { DemoStatusActionProps, DemoStatus } from './patterns/DemoStatusAction';
+export { DemoRadar, DEFAULT_DEAD_PLAYER_VISIBLE_S } from './patterns/DemoRadar';
+export type {
+    DemoRadarProps,
+    DemoRadarHandle,
+    DemoRadarCalibration,
+    DemoRadarPlayer,
+    DemoRadarFrame,
+    DemoRadarGrenade,
+    DemoRadarTrajectoryPoint,
+    DemoRadarKill,
+} from './patterns/DemoRadar';
+export { DemoTransportControls } from './patterns/DemoTransportControls';
+export type { DemoTransportControlsProps } from './patterns/DemoTransportControls';
+export { DemoRoundList } from './patterns/DemoRoundList';
+export type { DemoRoundListProps, DemoRoundListItem } from './patterns/DemoRoundList';
+export { DemoRoundStrip } from './patterns/DemoRoundStrip';
+export type { DemoRoundStripProps, DemoRoundStripRound } from './patterns/DemoRoundStrip';
+export { DemoKillFeed } from './patterns/DemoKillFeed';
+export type { DemoKillFeedProps, DemoKillFeedEntry } from './patterns/DemoKillFeed';
+export { DemoLoadoutPanel } from './patterns/DemoLoadoutPanel';
+export type {
+    DemoLoadoutPanelProps,
+    DemoLoadoutPlayer,
+    DemoLoadoutWeapon,
+    DemoLoadoutLiveState,
+} from './patterns/DemoLoadoutPanel';
+export { DemoRadarOverlay } from './patterns/DemoRadarOverlay';
+export type { DemoRadarOverlayProps } from './patterns/DemoRadarOverlay';
 
 export {
     ThrowLeftClickIcon,

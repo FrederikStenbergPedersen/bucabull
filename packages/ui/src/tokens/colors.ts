@@ -30,6 +30,16 @@ export const colors = {
         positive: 'hsl(142, 71%, 45%)',
         positiveForeground: 'hsl(220, 15%, 9%)',
         ring: 'hsl(187, 90%, 55%)',
+        // CS2 team colors for the demo viewer's radar (player dots,
+        // facing cones) — not used for general UI chrome. Deliberately
+        // NOT the brand's own cyan accent (hue ~187) for teamCt, since a
+        // radar full of accent-colored dots would be unreadable against
+        // this app's accent-cyan UI chrome around it; shifted to a
+        // clearly "blue" hue instead. teamT is the traditional CS
+        // orange/tan, which the brand palette dropped entirely (see this
+        // file's top comment) so there's no clash to avoid there.
+        teamCt: 'hsl(217, 85%, 65%)',
+        teamT: 'hsl(32, 90%, 58%)',
     },
     light: {
         background: 'hsl(210, 20%, 98%)',
@@ -49,5 +59,10 @@ export const colors = {
         positive: 'hsl(142, 71%, 36%)',
         positiveForeground: 'hsl(0, 0%, 100%)',
         ring: 'hsl(195, 88%, 38%)',
+        // See the dark palette's teamCt/teamT comment — same colors in
+        // both modes since these paint over a radar image, not the
+        // page's own light/dark background.
+        teamCt: 'hsl(217, 85%, 65%)',
+        teamT: 'hsl(32, 90%, 58%)',
     },
 } as const;

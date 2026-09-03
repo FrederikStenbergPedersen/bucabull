@@ -1,9 +1,9 @@
 # Deploying Bucabull
 
 Single VPS (the existing UpCloud server, already running Caddy + DNS for
-bucabull.com), Docker Compose (app + queue worker + scheduler + Postgres),
-GitHub Actions for deploy-on-push. Replaces the earlier stratbook fork that
-was previously deployed here.
+bucabull.com), Docker Compose (app + queue worker + demo-queue worker +
+scheduler + Postgres), GitHub Actions for deploy-on-push. Replaces the
+earlier stratbook fork that was previously deployed here.
 
 ## Image
 
@@ -13,9 +13,12 @@ Node stage builds the Vite bundle, a Composer stage installs PHP deps, the
 final stage is the FrankenPHP runtime. `packages/ui` is inlined into the
 Vite bundle at build time — the runtime image needs no Node.js.
 
-Three services share one image (`app`, `queue`, `scheduler`), differing
-only by `command:` in `docker-compose.prod.yml` — no separate builds, no
-cron (Laravel's `schedule:work` runs the scheduler continuously).
+Four services share one image (`app`, `queue`, `queue-demos`, `scheduler`),
+differing only by `command:` in `docker-compose.prod.yml` — no separate
+builds, no cron (Laravel's `schedule:work` runs the scheduler
+continuously). `queue-demos` is a dedicated worker/queue for demo parsing
+(see `config/demos.php`), kept separate so a long-running parse never
+blocks `queue`'s other jobs (e.g. the 5-minute roster refresh).
 
 ## One-time server setup
 
@@ -37,7 +40,19 @@ cron (Laravel's `schedule:work` runs the scheduler continuously).
    cd /var/www/bucabull
    ```
 
-3. **Create `/var/www/bucabull/.env`**:
+3. **Create the storage directories the compose file bind-mounts**:
+
+   ```bash
+   mkdir -p /var/www/bucabull/storage/app/public /var/www/bucabull/storage/app/private
+   ```
+
+   Both must be writable by whatever user the containers run as (verify
+   with `docker compose exec app id`) — a bind mount does NOT inherit the
+   image's build-time `chown www-data storage`. `private` holds uploaded
+   CS2 demos and their parsed output (never served directly — see
+   `DemoController`); `queue-demos` reads/writes it too, unlike `public`.
+
+4. **Create `/var/www/bucabull/.env`**:
 
    ```env
    APP_NAME=Bucabull
@@ -71,14 +86,14 @@ cron (Laravel's `schedule:work` runs the scheduler continuously).
    LOG_LEVEL=error
    ```
 
-4. **Point Caddy at it**:
+5. **Point Caddy at it**:
 
    ```bash
    sudo cp Caddyfile /etc/caddy/Caddyfile
    sudo systemctl reload caddy
    ```
 
-5. **Set up the deploy SSH key + GitHub secrets** (Settings → Secrets and
+6. **Set up the deploy SSH key + GitHub secrets** (Settings → Secrets and
    variables → Actions on the new repo):
 
    ```bash
@@ -94,7 +109,7 @@ cron (Laravel's `schedule:work` runs the scheduler continuously).
    GHCR, and deploys — including running `php artisan migrate --force` —
    automatically, every time.
 
-6. **Backups** — self-hosted Postgres has no automatic backups. Also
+7. **Backups** — self-hosted Postgres has no automatic backups. Also
    turn on your host's own server/disk-level backup or snapshot feature
    (most VPS providers have one) — `scripts/backup-postgres.sh` alone
    only protects the database, and still writes to the same disk unless
@@ -163,3 +178,10 @@ chance to confirm it actually works.
   `return_to` URL to correctly resolve as `https://`, not `http://`.
 - Verified locally: built the image, ran it against local Postgres,
   confirmed FrankenPHP serves the real seeded team data correctly.
+- **Not yet verified**: large CS2 demo uploads (100s of MB) against a real
+  deploy. `docker/php/uploads.ini` raises PHP's own limits, but FrankenPHP's
+  own Caddy config baked into the base image (`/etc/frankenphp/Caddyfile`,
+  distinct from this repo's root `Caddyfile`, which is the host reverse
+  proxy) has its own request-body limit that could reject a large upload
+  before PHP ever sees it. Test with a real multi-hundred-MB `.dem` file
+  after this deploys, before relying on it.

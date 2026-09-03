@@ -27,3 +27,8 @@ yarn-error.log
 
 *storybook.log
 storybook-static
+
+# go build output — the compiled binary is produced by the Dockerfile's
+# gobuild stage, never committed.
+/go/democompact
+/go/democompact.exe
