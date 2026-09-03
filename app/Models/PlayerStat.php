@@ -15,6 +15,10 @@ class PlayerStat extends Model
         'faceit_skill_level',
         'faceit_elo',
         'faceit_region',
+        'faceit_player_id',
+        'faceit_lifetime_matches',
+        'faceit_lifetime_win_rate',
+        'faceit_lifetime_avg_kd',
         'fetched_at',
     ];
 
@@ -22,6 +26,7 @@ class PlayerStat extends Model
     {
         return [
             'steam_last_seen_at' => 'datetime',
+            'faceit_lifetime_avg_kd' => 'float',
             'fetched_at' => 'datetime',
         ];
     }

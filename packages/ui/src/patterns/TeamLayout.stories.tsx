@@ -46,11 +46,11 @@ export const WithSidebarExtra: Story = {
         ],
         onLogout: () => {},
         sidebarExtra: (
-            <div className="flex flex-col gap-1 border-t border-border pt-4">
-                <SidebarNavItem href="#" active trailing={<span className="text-xs text-muted-foreground">4</span>}>
+            <div className="border-border flex flex-col gap-1 border-t pt-4">
+                <SidebarNavItem href="#" active trailing={<span className="text-muted-foreground text-xs">4</span>}>
                     Mirage
                 </SidebarNavItem>
-                <SidebarNavItem href="#" active={false} trailing={<span className="text-xs text-muted-foreground">0</span>}>
+                <SidebarNavItem href="#" active={false} trailing={<span className="text-muted-foreground text-xs">0</span>}>
                     Inferno
                 </SidebarNavItem>
             </div>
@@ -63,5 +63,21 @@ export const Guest: Story = {
     args: {
         navItems: [{ label: 'Roster', href: '#', active: true }],
         children: placeholder,
+    },
+};
+
+export const WideContent: Story = {
+    args: {
+        navItems: [
+            { label: 'Roster', href: '#', active: false },
+            { label: 'Demos', href: '#', active: true },
+        ],
+        onLogout: () => {},
+        contentClassName: 'max-w-3xl lg:max-w-6xl',
+        children: (
+            <Card>
+                <Text variant="body">A wider content column — e.g. the demo viewer's radar-beside-kill-feed layout.</Text>
+            </Card>
+        ),
     },
 };

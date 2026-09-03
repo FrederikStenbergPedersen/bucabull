@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\DemoController;
 use App\Http\Controllers\GrenadeController;
+use App\Http\Controllers\PlayerMatchHistoryController;
 use App\Http\Controllers\StrategyController;
 use App\Http\Controllers\TeamController;
+use App\Http\Middleware\EnsureTeammate;
 use App\Http\Middleware\EnsureUserHasTeam;
 use App\Models\Team;
 use Illuminate\Support\Facades\Auth;
@@ -44,6 +47,14 @@ Route::middleware(['auth', EnsureUserHasTeam::class])->prefix('team')->name('tea
     Route::post('strategies', [StrategyController::class, 'store'])->name('strategies.store');
     Route::put('strategies/{strategy}', [StrategyController::class, 'update'])->name('strategies.update');
     Route::delete('strategies/{strategy}', [StrategyController::class, 'destroy'])->name('strategies.destroy');
+
+    Route::post('matches/{match}/demo', [DemoController::class, 'store'])->name('demos.store');
+    Route::get('demos/{demo}', [DemoController::class, 'show'])->name('demos.show');
+    Route::get('demos/{demo}/data', [DemoController::class, 'data'])->name('demos.data');
+
+    Route::middleware(EnsureTeammate::class)->group(function () {
+        Route::get('players/{player}', [PlayerMatchHistoryController::class, 'show'])->name('players.show');
+    });
 });
 
 require __DIR__.'/auth.php';

@@ -39,6 +39,8 @@
     --color-warning: var(--warning);
     --color-warning-foreground: var(--warning-foreground);
     --color-ring: var(--ring);
+    --color-team-ct: var(--team-ct);
+    --color-team-t: var(--team-t);
 }
 
 /* Dark is the primary design target; light is a fully-supported second mode. */
@@ -62,6 +64,10 @@
     --warning: hsl(24, 85%, 42%);
     --warning-foreground: hsl(0, 0%, 100%);
     --ring: hsl(195, 88%, 38%);
+    /* Demo viewer radar team colors — see colors.ts for why these are
+       distinct from --accent rather than reusing it. */
+    --team-ct: hsl(217, 85%, 65%);
+    --team-t: hsl(32, 90%, 58%);
 }
 
 .dark {
@@ -84,6 +90,8 @@
     --warning: hsl(32, 90%, 55%);
     --warning-foreground: hsl(220, 15%, 9%);
     --ring: hsl(187, 90%, 55%);
+    --team-ct: hsl(217, 85%, 65%);
+    --team-t: hsl(32, 90%, 58%);
 }
 
 /*
