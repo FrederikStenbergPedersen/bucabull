@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { type DemoReplay, type Frame, type Round } from '@/types/demo';
+import { type DemoReplay, type Frame, type PlayerFrame, type Round } from '@/types/demo';
 
 export const PLAYBACK_SPEEDS = [0.5, 1, 2, 4] as const;
 
@@ -12,6 +12,8 @@ export interface DemoPlaybackState {
     /** Throttled to ~10Hz — for React-rendered UI (time label, round list highlight), not per-frame rendering. See `subscribe` for that. */
     timeS: number;
     durationS: number;
+    /** The current frame's players, throttled to the same ~10Hz cadence as `timeS` — for reactive (non-canvas) UI like the loadout panels that just needs a plain number/boolean update (health, is_alive), not DemoRadar's smoothly-interpolated 60fps positions. See `subscribe` for that. */
+    players: PlayerFrame[];
 }
 
 export interface DemoPlaybackControls {
@@ -99,6 +101,7 @@ export function useDemoPlayback(replay: DemoReplay | null): DemoPlaybackState & 
     const [isPlaying, setIsPlaying] = useState(false);
     const [speed, setSpeedState] = useState<number>(1);
     const [timeS, setTimeS] = useState(0);
+    const [players, setPlayers] = useState<PlayerFrame[]>([]);
 
     const round = replay?.rounds[roundIndex] ?? null;
     const durationS = round?.frames.at(-1)?.time_s ?? 0;
@@ -109,9 +112,14 @@ export function useDemoPlayback(replay: DemoReplay | null): DemoPlaybackState & 
     const liveTimeRef = useRef(0);
     const subscribersRef = useRef(new Set<(frame: Frame | null) => void>());
 
-    const publish = useCallback((atTimeS: number, forRound: Round | null) => {
+    // Returns the frame it computed so throttled call sites below can also
+    // feed `players` state from it, without recomputing frameAt a second
+    // time — the unthrottled per-rAF-tick call inside tick() just ignores
+    // the return value.
+    const publish = useCallback((atTimeS: number, forRound: Round | null): Frame | null => {
         const frame = forRound ? frameAt(forRound.frames, atTimeS) : null;
         subscribersRef.current.forEach((callback) => callback(frame));
+        return frame;
     }, []);
 
     // The rAF loop itself. Re-anchors liveTimeRef to the latest
@@ -133,16 +141,18 @@ export function useDemoPlayback(replay: DemoReplay | null): DemoPlaybackState & 
             last = now;
             liveTimeRef.current = next;
 
-            publish(next, round);
+            const frame = publish(next, round);
 
             if (now - lastFlush > THROTTLE_MS) {
                 lastFlush = now;
                 setTimeS(next);
+                setPlayers(frame?.players ?? []);
             }
 
             if (next >= durationS) {
                 setIsPlaying(false);
                 setTimeS(next);
+                setPlayers(frame?.players ?? []);
                 return;
             }
 
@@ -162,7 +172,8 @@ export function useDemoPlayback(replay: DemoReplay | null): DemoPlaybackState & 
     useEffect(() => {
         if (isPlaying) return;
         liveTimeRef.current = timeS;
-        publish(timeS, round);
+        const frame = publish(timeS, round);
+        setPlayers(frame?.players ?? []);
     }, [isPlaying, timeS, round, publish]);
 
     const play = useCallback(() => setIsPlaying(true), []);
@@ -182,7 +193,8 @@ export function useDemoPlayback(replay: DemoReplay | null): DemoPlaybackState & 
             const clamped = Math.max(0, Math.min(durationS, t));
             liveTimeRef.current = clamped;
             setTimeS(clamped);
-            publish(clamped, round);
+            const frame = publish(clamped, round);
+            setPlayers(frame?.players ?? []);
         },
         [durationS, round, publish],
     );
@@ -199,7 +211,8 @@ export function useDemoPlayback(replay: DemoReplay | null): DemoPlaybackState & 
             setRoundIndex(clamped);
             setTimeS(0);
             liveTimeRef.current = 0;
-            publish(0, nextRoundData);
+            const frame = publish(0, nextRoundData);
+            setPlayers(frame?.players ?? []);
         },
         [replay, publish],
     );
@@ -221,6 +234,7 @@ export function useDemoPlayback(replay: DemoReplay | null): DemoPlaybackState & 
         speed,
         timeS,
         durationS,
+        players,
         play,
         pause,
         togglePlay,

@@ -16,6 +16,7 @@ services:
     # started by a plain `docker compose up`, opt in explicitly:
     #
     #   docker compose --profile full up -d --build
+    #   (or the shorter `composer run dev:full`)
     #
     # This exists for testing things `composer run dev`'s built-in PHP
     # dev server can't represent accurately, chiefly large file uploads
@@ -38,8 +39,43 @@ services:
             # STEAM_CLIENT_SECRET, ...) comes from that same file.
             DB_HOST: postgres
             DB_PORT: 5432
+            # A local .env's DEMOS_PARSER_BINARY_PATH, if set, typically
+            # points at a host-native path (e.g. go/democompact.exe on
+            # Windows) for `composer run dev` — meaningless inside this
+            # container, which has its own freshly-built Linux binary at
+            # the config default (/usr/local/bin/democompact, see
+            # config/demos.php). Empty string, not unset, so it actually
+            # overrides the .env value — config/demos.php's `?:` already
+            # treats empty the same as unset for exactly this reason.
+            DEMOS_PARSER_BINARY_PATH: ''
         ports:
             - '127.0.0.1:8080:8080'
+        volumes:
+            - ./storage/app/public:/app/storage/app/public
+            - ./storage/app/private:/app/storage/app/private
+        depends_on:
+            - postgres
+
+    # Mirrors docker-compose.prod.yml's queue-demos service — without
+    # this, nothing in the `full` profile ever processes a queued
+    # ParseDemoJob at all (the `app` service only serves HTTP; FrankenPHP
+    # doesn't run queue workers on its own). Easy to miss because
+    # `composer run dev`'s own `queue:listen` may still be picking jobs
+    # up instead, silently, off the *same* shared Postgres DB — which
+    # means using the native DEMOS_PARSER_BINARY_PATH/democompact.exe,
+    # not this profile's freshly-built container binary, defeating the
+    # whole point of testing via `full`. Stop `composer run dev` (or at
+    # least its queue:listen process) while using this profile.
+    queue-demos:
+        profiles: ['full']
+        build: .
+        command: php artisan queue:work --queue=default,demos --tries=1 --timeout=1800
+        restart: unless-stopped
+        env_file: ./.env
+        environment:
+            DB_HOST: postgres
+            DB_PORT: 5432
+            DEMOS_PARSER_BINARY_PATH: ''
         volumes:
             - ./storage/app/public:/app/storage/app/public
             - ./storage/app/private:/app/storage/app/private

@@ -73,8 +73,19 @@ export { DemoTransportControls } from './patterns/DemoTransportControls';
 export type { DemoTransportControlsProps } from './patterns/DemoTransportControls';
 export { DemoRoundList } from './patterns/DemoRoundList';
 export type { DemoRoundListProps, DemoRoundListItem } from './patterns/DemoRoundList';
+export { DemoRoundStrip } from './patterns/DemoRoundStrip';
+export type { DemoRoundStripProps, DemoRoundStripRound } from './patterns/DemoRoundStrip';
 export { DemoKillFeed } from './patterns/DemoKillFeed';
 export type { DemoKillFeedProps, DemoKillFeedEntry } from './patterns/DemoKillFeed';
+export { DemoLoadoutPanel } from './patterns/DemoLoadoutPanel';
+export type {
+    DemoLoadoutPanelProps,
+    DemoLoadoutPlayer,
+    DemoLoadoutWeapon,
+    DemoLoadoutLiveState,
+} from './patterns/DemoLoadoutPanel';
+export { DemoRadarOverlay } from './patterns/DemoRadarOverlay';
+export type { DemoRadarOverlayProps } from './patterns/DemoRadarOverlay';
 
 export {
     ThrowLeftClickIcon,

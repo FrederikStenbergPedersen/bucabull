@@ -11,13 +11,19 @@ type Output struct {
 }
 
 type Round struct {
-	RoundNumber int     `json:"round_number"`
-	StartTick   int     `json:"start_tick"`
-	EndTick     int     `json:"end_tick"`
-	Winner      string  `json:"winner"` // "CT" | "T" | "" (draw/unknown)
-	EndReason   string  `json:"end_reason"`
-	Frames      []Frame `json:"frames"`
-	Kills       []Kill  `json:"kills"`
+	RoundNumber int    `json:"round_number"`
+	StartTick   int    `json:"start_tick"`
+	EndTick     int    `json:"end_tick"`
+	Winner      string `json:"winner"` // "CT" | "T" | "" (draw/unknown)
+	EndReason   string `json:"end_reason"`
+	// IsKnifeRound marks the pre-match knife round Faceit (and most
+	// competitive setups) plays to decide starting sides — everyone plays
+	// it with $0 and only a knife. It's real data worth keeping, just not
+	// a scored round: RoundNumber is 0 for it rather than taking the 1
+	// slot real rounds are numbered from. See finalizeRounds.
+	IsKnifeRound bool    `json:"is_knife_round"`
+	Frames       []Frame `json:"frames"`
+	Kills        []Kill  `json:"kills"`
 	// Pointers, not values: a grenade record is created once (on throw)
 	// and then mutated in place by later events (destroy, smoke
 	// start/expired, ...) looked up by entity ID — a []Grenade would let
@@ -25,6 +31,11 @@ type Round struct {
 	// any pointer taken into it earlier. encoding/json dereferences
 	// pointers automatically, so the JSON shape is identical either way.
 	Grenades []*Grenade `json:"grenades"`
+	// Loadouts is a once-per-round snapshot, taken at freeze-time-end (see
+	// onRoundFreezetimeEnd) — unlike Frames, it's not resampled through
+	// the round, since a player's starting buy doesn't change after live
+	// round time begins.
+	Loadouts []PlayerLoadout `json:"loadouts"`
 }
 
 // Frame is one sampled snapshot of every player's state — see
@@ -79,6 +90,30 @@ type Grenade struct {
 	// instead) and HE's blast is instantaneous.
 	EffectRadius  *float64 `json:"effect_radius"`
 	EffectEndTick *int     `json:"effect_end_tick"`
+}
+
+// LoadoutWeapon is one item in a player's inventory at freeze-time-end —
+// this includes grenades and non-weapon equipment (armor, defuse kit),
+// not just guns; IconKey is empty for anything that isn't rendered as the
+// loadout row's primary weapon icon.
+type LoadoutWeapon struct {
+	Name    string `json:"name"`     // display name, via weaponString() — same helper PlayerFrame.Weapon already uses
+	Class   string `json:"class"`    // pistol | smg | heavy | rifle | equipment | grenade | unknown
+	IconKey string `json:"icon_key"` // "" if this item has no icon
+}
+
+// PlayerLoadout is one player's starting-round economy/loadout snapshot —
+// see Round.Loadouts and onRoundFreezetimeEnd.
+type PlayerLoadout struct {
+	SteamID        string          `json:"steam_id"`
+	Name           string          `json:"name"`
+	Team           string          `json:"team"` // "CT" | "T" | ""
+	Money          int             `json:"money"`
+	EquipmentValue int             `json:"equipment_value"`
+	Armor          int             `json:"armor"`
+	HasHelmet      bool            `json:"has_helmet"`
+	HasDefuseKit   bool            `json:"has_defuse_kit"`
+	Weapons        []LoadoutWeapon `json:"weapons"` // full inventory, not just the active weapon
 }
 
 type TrajectoryPoint struct {

@@ -1,11 +1,12 @@
 import {
     Badge,
     type BadgeProps,
-    Card,
     DemoKillFeed,
+    DemoLoadoutPanel,
     DemoRadar,
     type DemoRadarHandle,
-    DemoRoundList,
+    DemoRadarOverlay,
+    DemoRoundStrip,
     DemoTransportControls,
     TeamLayout,
     Text,
@@ -17,7 +18,7 @@ import { DemoUpload } from '@/components/demo-upload';
 import { PLAYBACK_SPEEDS, useDemoPlayback } from '@/hooks/use-demo-playback';
 import { useTeamNav } from '@/hooks/use-team-nav';
 import { type SharedData } from '@/types';
-import { type DemoRecord, type DemoReplay, type MapRadarCalibration } from '@/types/demo';
+import { type DemoRecord, type DemoReplay, type MapRadarCalibration, type PlayerLoadout, type TeamSide } from '@/types/demo';
 
 interface DemoShowProps {
     demo: DemoRecord;
@@ -36,6 +37,48 @@ function durationLabel(seconds: number | null) {
     if (!seconds) return null;
     const minutes = Math.floor(seconds / 60);
     return `${minutes}m`;
+}
+
+/**
+ * Persistent team identity, independent of which side ("CT"/"T") a team
+ * is currently playing — teams switch sides at halftime, so "CT" alone
+ * can't be used as a running score bucket across a whole match without
+ * silently merging both teams' wins together once they swap. "A"/"B" are
+ * arbitrary labels, not tied to either side.
+ */
+type TeamKey = 'A' | 'B';
+
+/** Maps every player who appears in `loadouts` to a persistent team, using that round's CT/T split as the assignment. Meant to be called once, on the earliest round with loadout data, to fix each player's team for the rest of the match. */
+function assignTeams(loadouts: PlayerLoadout[]): Record<string, TeamKey> {
+    const steamIdToTeam: Record<string, TeamKey> = {};
+    for (const loadout of loadouts) {
+        if (loadout.team === 'CT') steamIdToTeam[loadout.steam_id] = 'A';
+        else if (loadout.team === 'T') steamIdToTeam[loadout.steam_id] = 'B';
+    }
+    return steamIdToTeam;
+}
+
+/**
+ * Which persistent team is currently playing CT and which is playing T,
+ * read from one round's own roster rather than assumed fixed — this is
+ * what actually changes at halftime. Majority vote per side rather than
+ * trusting a single player, in case a substitution mid-match left someone
+ * out of `steamIdToTeam`.
+ */
+function sideTeamsFor(loadouts: PlayerLoadout[], steamIdToTeam: Record<string, TeamKey>): Partial<Record<TeamSide, TeamKey>> {
+    const votes: Record<'CT' | 'T', Record<TeamKey, number>> = { CT: { A: 0, B: 0 }, T: { A: 0, B: 0 } };
+
+    for (const loadout of loadouts) {
+        const team = steamIdToTeam[loadout.steam_id];
+        if (team && (loadout.team === 'CT' || loadout.team === 'T')) votes[loadout.team][team]++;
+    }
+
+    const majority = (side: 'CT' | 'T'): TeamKey | undefined => {
+        const { A, B } = votes[side];
+        return A === 0 && B === 0 ? undefined : A >= B ? 'A' : 'B';
+    };
+
+    return { CT: majority('CT'), T: majority('T') };
 }
 
 /**
@@ -79,10 +122,10 @@ export default function DemoShow({ demo, mapRadar, matchId }: DemoShowProps) {
     const badge = STATUS_BADGE[demo.status];
     const { replay, error: replayError } = useReplay(demo.id, demo.status === 'ready');
 
-    // Single playback instance, shared by the round list (sidebar) and
-    // the radar/transport controls/kill feed (main content) below — all
-    // need to stay in sync (picking a round in the sidebar has to move
-    // the radar), so this can't be split into independent hook calls.
+    // Single playback instance, shared by everything below (loadout
+    // panels, radar, transport controls, round strip, kill feed) — all
+    // need to stay in sync (picking a round has to move the radar too),
+    // so this can't be split into independent hook calls.
     const playback = useDemoPlayback(replay);
     const radarRef = useRef<DemoRadarHandle>(null);
 
@@ -101,21 +144,64 @@ export default function DemoShow({ demo, mapRadar, matchId }: DemoShowProps) {
         return names;
     }, [playback.round]);
 
-    const sidebarExtra = replay?.rounds.length ? (
-        <DemoRoundList
-            rounds={replay.rounds.map((round) => ({ roundNumber: round.round_number, winner: round.winner }))}
-            activeIndex={playback.roundIndex}
-            onSelect={playback.goToRound}
-        />
-    ) : undefined;
+    // Round.loadouts is a once-per-round snapshot (money/weapons at
+    // freeze-time-end) — split by team for the two flanking panels.
+    // Optional-chained past `loadouts` itself, not just `round`: a demo
+    // parsed before this field existed has a stored parsed.json without
+    // it, so `round.loadouts` is undefined rather than an empty array.
+    const ctLoadouts = useMemo(() => playback.round?.loadouts?.filter((l) => l.team === 'CT') ?? [], [playback.round]);
+    const tLoadouts = useMemo(() => playback.round?.loadouts?.filter((l) => l.team === 'T') ?? [], [playback.round]);
+
+    // Live health/is_alive, throttled to ~10Hz via useDemoPlayback's
+    // `players` — separate from the static loadout snapshot above.
+    const live = useMemo(
+        () => Object.fromEntries(playback.players.map((p) => [p.steam_id, { health: p.health, is_alive: p.is_alive }])),
+        [playback.players],
+    );
+
+    // Running per-team win tally, for both the loadout panels' score
+    // headers and the round strip's per-tab score label. Teams swap sides
+    // at halftime, so this can't just count "CT" vs "T" wins across the
+    // whole match — see assignTeams/sideTeamsFor. Team identity is fixed
+    // once, from the earliest round with loadout data (the knife round,
+    // when present); each round after that re-reads which team is
+    // currently on which side from that round's own roster.
+    const roundStripData = useMemo(() => {
+        const rounds = replay?.rounds ?? [];
+        const identityRound = rounds.find((r) => r.loadouts.length > 0);
+        const steamIdToTeam = assignTeams(identityRound?.loadouts ?? []);
+
+        const score: Record<TeamKey, number> = { A: 0, B: 0 };
+
+        return rounds.map((round) => {
+            const sideTeams = sideTeamsFor(round.loadouts, steamIdToTeam);
+
+            // The knife round only decides side picks, not the match score.
+            if (!round.is_knife_round && round.winner) {
+                const winningTeam = sideTeams[round.winner];
+                if (winningTeam) score[winningTeam]++;
+            }
+
+            return {
+                roundNumber: round.round_number,
+                winner: round.winner,
+                isKnifeRound: round.is_knife_round,
+                ctScore: sideTeams.CT ? score[sideTeams.CT] : 0,
+                tScore: sideTeams.T ? score[sideTeams.T] : 0,
+            };
+        });
+    }, [replay]);
+
+    // Score going into the *current* round (before its own result), not
+    // including it — matches the reference product's scoreboard header.
+    const currentScore = roundStripData[playback.roundIndex - 1] ?? { ctScore: 0, tScore: 0 };
 
     return (
         <TeamLayout
             navItems={navItems}
             onLogout={auth?.user ? () => router.post(route('logout')) : undefined}
             linkAs={Link}
-            sidebarExtra={sidebarExtra}
-            contentClassName="max-w-3xl lg:max-w-6xl"
+            contentClassName="max-w-3xl lg:max-w-7xl"
         >
             <Head title={`${demo.map} · Demo`} />
 
@@ -165,15 +251,26 @@ export default function DemoShow({ demo, mapRadar, matchId }: DemoShowProps) {
                 replay &&
                 replay.rounds.length > 0 &&
                 (mapRadar ? (
-                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
+                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[14rem_minmax(0,1fr)_14rem]">
+                        <DemoLoadoutPanel team="CT" teamLabel="Counter-Terrorists" score={currentScore.ctScore} players={ctLoadouts} live={live} />
+
                         <div className="flex flex-col gap-4">
-                            <DemoRadar
-                                ref={radarRef}
-                                calibration={mapRadar}
-                                grenades={playback.round?.grenades ?? []}
-                                kills={playback.round?.kills ?? []}
-                                tickRate={replay.tick_rate}
-                            />
+                            <div className="relative">
+                                <DemoRadar
+                                    ref={radarRef}
+                                    calibration={mapRadar}
+                                    grenades={playback.round?.grenades ?? []}
+                                    kills={playback.round?.kills ?? []}
+                                    tickRate={replay.tick_rate}
+                                />
+                                <DemoRadarOverlay>
+                                    <Text variant="muted" className="mb-2 text-xs tracking-wide uppercase">
+                                        Kills
+                                    </Text>
+                                    <DemoKillFeed kills={playback.round?.kills ?? []} currentTimeS={playback.timeS} playerNames={playerNames} />
+                                </DemoRadarOverlay>
+                            </div>
+
                             <DemoTransportControls
                                 isPlaying={playback.isPlaying}
                                 onTogglePlay={playback.togglePlay}
@@ -188,13 +285,11 @@ export default function DemoShow({ demo, mapRadar, matchId }: DemoShowProps) {
                                 canGoPrevRound={playback.roundIndex > 0}
                                 canGoNextRound={playback.roundIndex < replay.rounds.length - 1}
                             />
+
+                            <DemoRoundStrip rounds={roundStripData} activeIndex={playback.roundIndex} onSelect={playback.goToRound} />
                         </div>
-                        <Card className="h-fit">
-                            <Text variant="muted" className="mb-2 text-xs tracking-wide uppercase">
-                                Kills
-                            </Text>
-                            <DemoKillFeed kills={playback.round?.kills ?? []} currentTimeS={playback.timeS} playerNames={playerNames} />
-                        </Card>
+
+                        <DemoLoadoutPanel team="T" teamLabel="Terrorists" score={currentScore.tScore} players={tLoadouts} live={live} />
                     </div>
                 ) : (
                     <Text variant="muted">Radar art isn&apos;t available for {demo.map} yet.</Text>

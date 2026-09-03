@@ -109,6 +109,7 @@ func Parse(r io.Reader) (*Output, error) {
 	})
 
 	p.RegisterEventHandler(s.onRoundStart)
+	p.RegisterEventHandler(s.onRoundFreezetimeEnd)
 	p.RegisterEventHandler(s.onRoundEnd)
 	p.RegisterEventHandler(s.onFrameDone)
 	p.RegisterEventHandler(s.onKill)
@@ -131,6 +132,11 @@ func Parse(r io.Reader) (*Output, error) {
 	// keeping — flush it rather than silently dropping the last round.
 	s.flushIncompleteRound("demo_ended")
 
+	// Strip the knife-round restart and renumber accordingly — see
+	// finalizeRounds' own comment for why the raw round sequence isn't
+	// what the viewer should show.
+	s.out.Rounds = finalizeRounds(s.out.Rounds)
+
 	s.out.TickRate = s.parser.TickRate()
 
 	return s.out, nil
@@ -148,6 +154,7 @@ func (s *state) startRound() {
 		Frames:   []Frame{},
 		Kills:    []Kill{},
 		Grenades: []*Grenade{},
+		Loadouts: []PlayerLoadout{},
 	}
 	s.roundStartTime = s.parser.CurrentTime()
 }
@@ -177,6 +184,46 @@ func (s *state) flushIncompleteRound(reason string) {
 
 	s.out.Rounds = append(s.out.Rounds, *s.current)
 	s.current = nil
+}
+
+// onRoundFreezetimeEnd snapshots each player's starting-round money and
+// loadout right after buy time closes — RoundStart fires too early (before
+// buys), and onFrameDone's per-tick sampling is the wrong cadence for a
+// once-per-round buy snapshot, so this needs its own handler rather than
+// extending either of those.
+func (s *state) onRoundFreezetimeEnd(events.RoundFreezetimeEnd) {
+	if s.current == nil {
+		return
+	}
+
+	playing := s.parser.GameState().Participants().Playing()
+	loadouts := make([]PlayerLoadout, 0, len(playing))
+
+	for _, pl := range playing {
+		weapons := pl.Weapons()
+		items := make([]LoadoutWeapon, 0, len(weapons))
+		for _, w := range weapons {
+			items = append(items, LoadoutWeapon{
+				Name:    weaponString(w),
+				Class:   weaponClassString(w.Type),
+				IconKey: weaponIconKey(w.Type),
+			})
+		}
+
+		loadouts = append(loadouts, PlayerLoadout{
+			SteamID:        fmt.Sprintf("%d", pl.SteamID64),
+			Name:           pl.Name,
+			Team:           teamString(pl.Team),
+			Money:          pl.Money(),
+			EquipmentValue: pl.EquipmentValueFreezeTimeEnd(),
+			Armor:          pl.Armor(),
+			HasHelmet:      pl.HasHelmet(),
+			HasDefuseKit:   pl.HasDefuseKit(),
+			Weapons:        items,
+		})
+	}
+
+	s.current.Loadouts = loadouts
 }
 
 func (s *state) onRoundEnd(e events.RoundEnd) {

@@ -30,6 +30,62 @@ func TestSampleIntervalTicks(t *testing.T) {
 	}
 }
 
+func TestFinalizeRounds(t *testing.T) {
+	t.Run("Faceit pattern: knife round kept and flagged, restart round dropped, rest renumbered", func(t *testing.T) {
+		rounds := []Round{
+			{RoundNumber: 1, Winner: "T"},  // knife round
+			{RoundNumber: 2, Winner: ""},   // side-pick restart, no real winner
+			{RoundNumber: 3, Winner: "CT"}, // first real round
+			{RoundNumber: 4, Winner: "T"},
+		}
+
+		got := finalizeRounds(rounds)
+
+		if len(got) != 3 {
+			t.Fatalf("len(got) = %d, want 3", len(got))
+		}
+
+		if !got[0].IsKnifeRound || got[0].RoundNumber != 0 || got[0].Winner != "T" {
+			t.Errorf("knife round = %+v, want IsKnifeRound=true RoundNumber=0 Winner=T", got[0])
+		}
+		if got[1].IsKnifeRound || got[1].RoundNumber != 1 || got[1].Winner != "CT" {
+			t.Errorf("round[1] = %+v, want IsKnifeRound=false RoundNumber=1 Winner=CT", got[1])
+		}
+		if got[2].IsKnifeRound || got[2].RoundNumber != 2 || got[2].Winner != "T" {
+			t.Errorf("round[2] = %+v, want IsKnifeRound=false RoundNumber=2 Winner=T", got[2])
+		}
+	})
+
+	t.Run("second round has a real winner: not the Faceit pattern, left alone", func(t *testing.T) {
+		rounds := []Round{
+			{RoundNumber: 1, Winner: "T"},
+			{RoundNumber: 2, Winner: "CT"},
+		}
+
+		got := finalizeRounds(rounds)
+
+		if len(got) != 2 || got[0].IsKnifeRound || got[1].IsKnifeRound {
+			t.Errorf("got %+v, want unchanged and unflagged", got)
+		}
+	})
+
+	cases := []struct {
+		name   string
+		rounds []Round
+	}{
+		{"no rounds", []Round{}},
+		{"single round", []Round{{RoundNumber: 1, Winner: "CT"}}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			got := finalizeRounds(tc.rounds)
+			if len(got) != len(tc.rounds) {
+				t.Errorf("finalizeRounds(%+v) = %+v, want unchanged", tc.rounds, got)
+			}
+		})
+	}
+}
+
 func TestTeamString(t *testing.T) {
 	cases := []struct {
 		team common.Team
@@ -107,6 +163,58 @@ func TestRoundEndReasonString(t *testing.T) {
 	for _, tc := range cases {
 		if got := roundEndReasonString(tc.reason); got != tc.want {
 			t.Errorf("roundEndReasonString(%v) = %q, want %q", tc.reason, got, tc.want)
+		}
+	}
+}
+
+func TestWeaponClassString(t *testing.T) {
+	cases := []struct {
+		eq   common.EquipmentType
+		want string
+	}{
+		{common.EqGlock, "pistol"},
+		{common.EqDeagle, "pistol"},
+		{common.EqMP9, "smg"},
+		{common.EqP90, "smg"},
+		{common.EqNova, "heavy"},
+		{common.EqM249, "heavy"},
+		{common.EqAK47, "rifle"},
+		{common.EqAWP, "rifle"},
+		{common.EqKevlar, "equipment"},
+		{common.EqDefuseKit, "equipment"},
+		{common.EqSmoke, "grenade"},
+		{common.EqHE, "grenade"},
+		{common.EqUnknown, "unknown"},
+	}
+
+	for _, tc := range cases {
+		if got := weaponClassString(tc.eq); got != tc.want {
+			t.Errorf("weaponClassString(%v) = %q, want %q", tc.eq, got, tc.want)
+		}
+	}
+}
+
+func TestWeaponIconKey(t *testing.T) {
+	cases := []struct {
+		eq   common.EquipmentType
+		want string
+	}{
+		{common.EqAK47, "ak47"},
+		{common.EqM4A4, "m4a4"},
+		{common.EqAWP, "awp"},
+		{common.EqDeagle, "desert-eagle"},
+		{common.EqUSP, "usp-s"},
+		{common.EqZeus, "zeus"},
+		{common.EqKnife, "knife"},
+		{common.EqKevlar, ""}, // armor isn't rendered as a loadout icon
+		{common.EqDefuseKit, ""},
+		{common.EqSmoke, ""}, // grenades aren't rendered as the row's primary weapon icon
+		{common.EqUnknown, ""},
+	}
+
+	for _, tc := range cases {
+		if got := weaponIconKey(tc.eq); got != tc.want {
+			t.Errorf("weaponIconKey(%v) = %q, want %q", tc.eq, got, tc.want)
 		}
 	}
 }

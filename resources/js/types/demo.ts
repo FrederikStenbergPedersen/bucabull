@@ -88,15 +88,38 @@ export interface GrenadeEvent {
     effect_end_tick: number | null;
 }
 
+/** One item in a player's inventory at freeze-time-end — includes grenades and non-weapon equipment, not just guns. `icon_key` is empty for anything that isn't rendered as a loadout row's primary weapon icon. */
+export interface LoadoutWeapon {
+    name: string;
+    class: string; // pistol | smg | heavy | rifle | equipment | grenade | unknown
+    icon_key: string;
+}
+
+/** One player's starting-round economy/loadout snapshot — see Round.loadouts. Unlike Frame, this isn't resampled through the round; a player's starting buy doesn't change after live round time begins. */
+export interface PlayerLoadout {
+    steam_id: string;
+    name: string;
+    team: TeamSide;
+    money: number;
+    equipment_value: number;
+    armor: number;
+    has_helmet: boolean;
+    has_defuse_kit: boolean;
+    weapons: LoadoutWeapon[];
+}
+
 export interface Round {
     round_number: number;
     start_tick: number;
     end_tick: number;
     winner: TeamSide;
     end_reason: string;
+    /** The pre-match knife round that decides starting sides — kept, not scored. `round_number` is 0 for it. See the Go schema's comment on Round.IsKnifeRound. */
+    is_knife_round: boolean;
     frames: Frame[];
     kills: KillEvent[];
     grenades: GrenadeEvent[];
+    loadouts: PlayerLoadout[];
 }
 
 /** The full document served by GET team.demos.data. */
