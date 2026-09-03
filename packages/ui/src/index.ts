@@ -58,7 +58,7 @@ export type { VideoThumbnailProps } from './patterns/VideoThumbnail';
 
 export { DemoStatusAction } from './patterns/DemoStatusAction';
 export type { DemoStatusActionProps, DemoStatus } from './patterns/DemoStatusAction';
-export { DemoRadar } from './patterns/DemoRadar';
+export { DemoRadar, DEFAULT_DEAD_PLAYER_VISIBLE_S } from './patterns/DemoRadar';
 export type {
     DemoRadarProps,
     DemoRadarHandle,
@@ -67,6 +67,7 @@ export type {
     DemoRadarFrame,
     DemoRadarGrenade,
     DemoRadarTrajectoryPoint,
+    DemoRadarKill,
 } from './patterns/DemoRadar';
 export { DemoTransportControls } from './patterns/DemoTransportControls';
 export type { DemoTransportControlsProps } from './patterns/DemoTransportControls';

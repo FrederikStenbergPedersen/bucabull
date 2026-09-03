@@ -1,6 +1,7 @@
 import {
     Badge,
     type BadgeProps,
+    Card,
     DemoKillFeed,
     DemoRadar,
     type DemoRadarHandle,
@@ -114,6 +115,7 @@ export default function DemoShow({ demo, mapRadar, matchId }: DemoShowProps) {
             onLogout={auth?.user ? () => router.post(route('logout')) : undefined}
             linkAs={Link}
             sidebarExtra={sidebarExtra}
+            contentClassName="max-w-3xl lg:max-w-6xl"
         >
             <Head title={`${demo.map} · Demo`} />
 
@@ -163,28 +165,36 @@ export default function DemoShow({ demo, mapRadar, matchId }: DemoShowProps) {
                 replay &&
                 replay.rounds.length > 0 &&
                 (mapRadar ? (
-                    <div className="flex flex-col gap-4">
-                        <DemoRadar ref={radarRef} calibration={mapRadar} grenades={playback.round?.grenades ?? []} />
-                        <DemoTransportControls
-                            isPlaying={playback.isPlaying}
-                            onTogglePlay={playback.togglePlay}
-                            timeS={playback.timeS}
-                            durationS={playback.durationS}
-                            onSeek={playback.seek}
-                            speed={playback.speed}
-                            speedOptions={[...PLAYBACK_SPEEDS]}
-                            onSpeedChange={playback.setSpeed}
-                            onPrevRound={playback.prevRound}
-                            onNextRound={playback.nextRound}
-                            canGoPrevRound={playback.roundIndex > 0}
-                            canGoNextRound={playback.roundIndex < replay.rounds.length - 1}
-                        />
-                        <div className="border-border bg-card rounded-md border p-4">
+                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
+                        <div className="flex flex-col gap-4">
+                            <DemoRadar
+                                ref={radarRef}
+                                calibration={mapRadar}
+                                grenades={playback.round?.grenades ?? []}
+                                kills={playback.round?.kills ?? []}
+                                tickRate={replay.tick_rate}
+                            />
+                            <DemoTransportControls
+                                isPlaying={playback.isPlaying}
+                                onTogglePlay={playback.togglePlay}
+                                timeS={playback.timeS}
+                                durationS={playback.durationS}
+                                onSeek={playback.seek}
+                                speed={playback.speed}
+                                speedOptions={[...PLAYBACK_SPEEDS]}
+                                onSpeedChange={playback.setSpeed}
+                                onPrevRound={playback.prevRound}
+                                onNextRound={playback.nextRound}
+                                canGoPrevRound={playback.roundIndex > 0}
+                                canGoNextRound={playback.roundIndex < replay.rounds.length - 1}
+                            />
+                        </div>
+                        <Card className="h-fit">
                             <Text variant="muted" className="mb-2 text-xs tracking-wide uppercase">
                                 Kills
                             </Text>
                             <DemoKillFeed kills={playback.round?.kills ?? []} currentTimeS={playback.timeS} playerNames={playerNames} />
-                        </div>
+                        </Card>
                     </div>
                 ) : (
                     <Text variant="muted">Radar art isn&apos;t available for {demo.map} yet.</Text>
