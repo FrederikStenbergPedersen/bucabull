@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\RefreshPresenceJob;
 use App\Jobs\RefreshRosterStatsJob;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -36,7 +37,15 @@ class SteamAuthController extends Controller
 
         Auth::login($user, remember: true);
 
-        RefreshRosterStatsJob::dispatch();
+        // Mark the team active so the scheduled roster jobs keep polling
+        // it, and refresh this player's own stats now rather than waiting
+        // for the next rolling cycle.
+        if ($user->team_id) {
+            $user->team()->update(['last_active_at' => now()]);
+        }
+
+        RefreshPresenceJob::dispatch($user);
+        RefreshRosterStatsJob::dispatch($user);
 
         return $user->team_id
             ? redirect()->intended(route('home', absolute: false))

@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PlayerStat extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'steam_persona_state',
@@ -19,7 +22,8 @@ class PlayerStat extends Model
         'faceit_lifetime_matches',
         'faceit_lifetime_win_rate',
         'faceit_lifetime_avg_kd',
-        'fetched_at',
+        'presence_synced_at',
+        'stats_synced_at',
     ];
 
     protected function casts(): array
@@ -27,7 +31,8 @@ class PlayerStat extends Model
         return [
             'steam_last_seen_at' => 'datetime',
             'faceit_lifetime_avg_kd' => 'float',
-            'fetched_at' => 'datetime',
+            'presence_synced_at' => 'datetime',
+            'stats_synced_at' => 'datetime',
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,7 +18,26 @@ class Team extends Model
         'slug',
         'invite_code',
         'owner_id',
+        'last_active_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'last_active_at' => 'datetime',
+        ];
+    }
+
+    /**
+     * Teams a member has used within config('roster.active_team_days') —
+     * the only teams the roster-refresh jobs poll.
+     *
+     * @param  Builder<Team>  $query
+     */
+    public function scopeActive(Builder $query): void
+    {
+        $query->where('last_active_at', '>=', now()->subDays(config('roster.active_team_days')));
+    }
 
     /**
      * @return HasMany<User, $this>

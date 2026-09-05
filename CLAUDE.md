@@ -14,8 +14,13 @@ is redirected to `/team/join` to create or join one via invite code — teams
 are self-service, never console-assigned.
 
 Steam/Faceit data (online status, rank, playtime) is polled on a schedule
-(`app/Jobs/RefreshRosterStatsJob.php`, `routes/console.php`) into
-`player_stats`, never fetched live per-request.
+into `player_stats`, never fetched live per-request. Two jobs
+(`routes/console.php`): `RefreshPresenceJob` does the cheap batched Steam
+online-status call often; `RefreshRosterStatsJob` does the expensive
+per-player FACEIT/playtime calls on a slower rolling schedule, scoped to
+teams active within `config('roster.active_team_days')` and capped at
+`config('roster.stats_batch_size')` players per run. `TouchTeamActivity`
+middleware is what marks a team active.
 
 Strats and the tactics board — the original stratbook-inspired feature
 set — are intentionally not built yet. Don't add them unless asked. The
